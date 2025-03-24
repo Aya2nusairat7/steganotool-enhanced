@@ -24,11 +24,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest pytest-cov
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Install FFmpeg
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg
+    - name: Create required directories
+      run: |
+        mkdir -p uploads
+        mkdir -p output
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names

@@ -9,6 +9,13 @@
 </p>
 
 <p align="center">
+  <img src="https://github.com/yourusername/steganotool/actions/workflows/python-tests.yml/badge.svg" alt="Tests Status"/>
+  <a href="https://codecov.io/gh/yourusername/steganotool">
+    <img src="https://codecov.io/gh/yourusername/steganotool/branch/main/graph/badge.svg" alt="Coverage Status"/>
+  </a>
+</p>
+
+<p align="center">
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
   <a href="#usage">Usage</a> •
@@ -97,4 +104,44 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgements
 
 - Thanks to all contributors who have helped make this project better
-- Special thanks to the open-source community for their invaluable resources and tools 
+- Special thanks to the open-source community for their invaluable resources and tools
+
+## Running Tests
+
+To run the tests, follow these steps:
+
+1. Make sure you have installed the development dependencies:
+   ```bash
+   pip install -r requirements-dev.txt
+   pip install pytest pytest-cov
+   ```
+
+2. Ensure the required directories exist:
+   ```bash
+   mkdir -p uploads
+   mkdir -p output
+   ```
+
+3. Run the tests using pytest:
+   ```bash
+   pytest
+   ```
+
+For more detailed test output, use:
+```bash
+pytest -v
+```
+
+To generate a coverage report:
+```bash
+# Terminal report
+pytest --cov=. --cov-report=term
+
+# HTML report (outputs to htmlcov/ directory)
+pytest --cov=. --cov-report=html
+
+# XML report for CI tools
+pytest --cov=. --cov-report=xml
+```
+
+The coverage reports provide insights into which parts of the code are being tested and which parts need more test coverage. 

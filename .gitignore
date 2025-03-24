@@ -40,4 +40,12 @@ output/
 .vscode/
 *.swp
 *.swo
-.DS_Store 
+.DS_Store
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# Test cache
+.pytest_cache/ 
