@@ -4,6 +4,7 @@ import io
 import os
 import sys
 import hashlib
+import mimetypes
 
 # Add the parent directory to sys.path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -43,7 +44,8 @@ class TestAPIEndpoints(unittest.TestCase):
     @patch('utils.generate_strong_password')
     @patch('api.encrypt_message')
     @patch('os.path.getsize')
-    def test_encrypt_api_endpoint(self, mock_getsize, mock_encrypt, mock_gen_password, mock_hide_data):
+    @patch('mimetypes.guess_type', return_value=('image/png', None))
+    def test_encrypt_api_endpoint(self, mock_mimetype, mock_getsize, mock_encrypt, mock_gen_password, mock_hide_data):
         """Test the encrypt API endpoint."""
         # Setup mocks
         mock_encrypt.return_value = b'encrypted-data'
@@ -51,10 +53,10 @@ class TestAPIEndpoints(unittest.TestCase):
         mock_hide_data.return_value = None  # No return value needed
         mock_getsize.return_value = 1024  # Fake file size
 
-        # Create test file
+        # Create a real BytesIO object for the file
         test_data = b'test image data'
-        test_file = (io.BytesIO(test_data), 'test.png')
-
+        test_file = io.BytesIO(test_data)
+        
         # Test with auto-generate password
         with patch('os.path.exists', return_value=True), \
              patch('builtins.open', mock_open(read_data=test_data)):
@@ -64,7 +66,7 @@ class TestAPIEndpoints(unittest.TestCase):
                 response = self.app.post(
                     '/api/encrypt',
                     data={
-                        'file': test_file,
+                        'file': (test_file, 'test.png'),
                         'message': 'secret message',
                         'auto_generate': 'true',
                         'media_type': 'image'
@@ -80,7 +82,8 @@ class TestAPIEndpoints(unittest.TestCase):
 
     @patch('utils.extract_data_from_image')
     @patch('hashlib.sha256')
-    def test_decrypt_api_endpoint(self, mock_sha256, mock_extract_data):
+    @patch('mimetypes.guess_type', return_value=('image/png', None))
+    def test_decrypt_api_endpoint(self, mock_mimetype, mock_sha256, mock_extract_data):
         """Test the decrypt API endpoint."""
         # Create a mock hash object
         mock_hash = MagicMock()
@@ -110,10 +113,10 @@ class TestAPIEndpoints(unittest.TestCase):
         extracted_data = encrypted_data + b'\x01' + password.encode('utf-8')
         mock_extract_data.return_value = extracted_data
 
-        # Create test file
+        # Create a real BytesIO object for the file
         test_data = b'test image data'
-        test_file = (io.BytesIO(test_data), 'test.png')
-
+        test_file = io.BytesIO(test_data)
+        
         # Test with embedded password
         with patch('os.path.exists', return_value=True), \
              patch('builtins.open', mock_open(read_data=test_data)):
@@ -123,7 +126,7 @@ class TestAPIEndpoints(unittest.TestCase):
                 response = self.app.post(
                     '/api/decrypt',
                     data={
-                        'file': test_file,
+                        'file': (test_file, 'test.png'),
                         'media_type': 'image'
                     },
                     content_type='multipart/form-data'
