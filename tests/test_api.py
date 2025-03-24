@@ -58,22 +58,25 @@ class TestAPIEndpoints(unittest.TestCase):
         # Test with auto-generate password
         with patch('os.path.exists', return_value=True), \
              patch('builtins.open', mock_open(read_data=test_data)):
-            response = self.app.post(
-                '/api/encrypt',
-                data={
-                    'file': test_file,
-                    'message': 'secret message',
-                    'auto_generate': 'true',
-                    'media_type': 'image'
-                },
-                content_type='multipart/form-data'
-            )
+            # Mock the actual file operations to avoid concatenation issues
+            with patch('api.os.path.join', side_effect=lambda *args: '/'.join(args)), \
+                 patch('api.secure_filename', side_effect=lambda x: x):
+                response = self.app.post(
+                    '/api/encrypt',
+                    data={
+                        'file': test_file,
+                        'message': 'secret message',
+                        'auto_generate': 'true',
+                        'media_type': 'image'
+                    },
+                    content_type='multipart/form-data'
+                )
 
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json['status'], 'success')
-            mock_encrypt.assert_called_once()
-            mock_gen_password.assert_called_once()
-            mock_hide_data.assert_called_once()
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.json['status'], 'success')
+                mock_encrypt.assert_called_once()
+                mock_gen_password.assert_called_once()
+                mock_hide_data.assert_called_once()
 
     @patch('utils.extract_data_from_image')
     @patch('hashlib.sha256')
@@ -114,18 +117,21 @@ class TestAPIEndpoints(unittest.TestCase):
         # Test with embedded password
         with patch('os.path.exists', return_value=True), \
              patch('builtins.open', mock_open(read_data=test_data)):
-            response = self.app.post(
-                '/api/decrypt',
-                data={
-                    'file': test_file,
-                    'media_type': 'image'
-                },
-                content_type='multipart/form-data'
-            )
+            # Mock the path joining to avoid string/bytes concatenation issues
+            with patch('api.os.path.join', side_effect=lambda *args: '/'.join(args)), \
+                 patch('api.secure_filename', side_effect=lambda x: x):
+                response = self.app.post(
+                    '/api/decrypt',
+                    data={
+                        'file': test_file,
+                        'media_type': 'image'
+                    },
+                    content_type='multipart/form-data'
+                )
 
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json['status'], 'success')
-            mock_extract_data.assert_called_once()
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.json['status'], 'success')
+                mock_extract_data.assert_called_once()
 
     def test_download_endpoint(self):
         """Test the download endpoint."""
