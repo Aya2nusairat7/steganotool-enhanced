@@ -1,0 +1,59 @@
+<svg width="500" height="400" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Glow -->
+  <circle cx="250" cy="200" r="150" fill="url(#radialGlow)" />
+  
+  <!-- Image representation -->
+  <rect x="150" y="100" width="200" height="150" rx="8" fill="#4f46e5" filter="url(#shadow)" />
+  <rect x="165" y="115" width="170" height="120" rx="4" fill="#111827" />
+  
+  <!-- Hidden data visualization -->
+  <g transform="translate(250, 175) scale(0.8)">
+    <path d="M-50,-25 L50,-25 L50,25 L-50,25 Z" fill="none" stroke="#6366f1" stroke-width="1" />
+    <path d="M-40,-15 L40,-15 L40,15 L-40,15 Z" fill="none" stroke="#6366f1" stroke-width="1" />
+    
+    <!-- Binary data pattern -->
+    <g fill="#10b981" font-family="monospace" font-size="8" opacity="0.7">
+      <text x="-35" y="-5">10110101</text>
+      <text x="-35" y="5">01011010</text>
+      <text x="-35" y="15">11001100</text>
+    </g>
+    
+    <!-- Lock icon -->
+    <circle cx="0" cy="0" r="15" fill="#6366f1" />
+    <rect x="-5" y="-3" width="10" height="10" rx="2" fill="#111827" />
+    <rect x="-2" y="-8" width="4" height="5" rx="1" fill="#111827" />
+  </g>
+  
+  <!-- Connection lines -->
+  <g stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.6">
+    <path d="M150,170 C100,140 80,210 50,200" />
+    <path d="M350,180 C400,210 420,150 450,190" />
+  </g>
+  
+  <!-- Security circles -->
+  <g>
+    <circle cx="50" cy="200" r="25" fill="#4f46e5" opacity="0.2" />
+    <circle cx="50" cy="200" r="15" fill="#4f46e5" opacity="0.4" />
+    <text x="50" y="204" text-anchor="middle" font-family="monospace" font-size="12" fill="#111827">🔒</text>
+  </g>
+  
+  <g>
+    <circle cx="450" cy="190" r="25" fill="#10b981" opacity="0.2" />
+    <circle cx="450" cy="190" r="15" fill="#10b981" opacity="0.4" />
+    <text x="450" y="194" text-anchor="middle" font-family="monospace" font-size="12" fill="#111827">🔑</text>
+  </g>
+  
+  <!-- Definitions -->
+  <defs>
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="10" flood-color="#000" flood-opacity="0.3" />
+    </filter>
+    
+    <!-- Radial gradient -->
+    <radialGradient id="radialGlow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+</svg> 

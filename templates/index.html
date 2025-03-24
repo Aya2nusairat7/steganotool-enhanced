@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steganography Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/img/favicon.png" type="image/png">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="bi bi-shield-lock"></i> CryptoStealth</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#encrypt">Encrypt</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#decrypt">Decrypt</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#workflow">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#api">API</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Secure Steganography</h1>
+                    <p class="hero-subtitle">Hide encrypted messages in images and audio files with advanced security features</p>
+                    <div class="hero-buttons">
+                        <a href="#encrypt" class="btn btn-primary btn-lg"><i class="bi bi-lock-fill"></i> Get Started</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg ms-2"><i class="bi bi-info-circle"></i> Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <img src="/static/img/hero-illustration.svg" alt="Steganography Illustration" class="img-fluid" onerror="this.src='/static/img/favicon.png'; this.style.maxWidth='280px'; this.style.margin='0 auto'; this.style.display='block';">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="main-content" id="encrypt">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Hide Your Secrets</h2>
+                <p>Two powerful tools for secure communications</p>
+            </div>
+            
+            <div class="tab-switcher">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="encrypt-tab">
+                        <i class="bi bi-lock-fill"></i> Encrypt & Hide
+                    </button>
+                    <button class="tab-btn" data-tab="decrypt-tab">
+                        <i class="bi bi-unlock-fill"></i> Extract & Decrypt
+                    </button>
+                </div>
+                
+                <div class="tab-content">
+                    <!-- Encrypt Tab -->
+                    <div class="tab-pane active" id="encrypt-tab">
+                        <div class="tool-container">
+                            <form id="encryptForm" enctype="multipart/form-data" class="modern-form">
+                                <div class="form-group media-selector">
+                                    <div class="option-label">Choose media type:</div>
+                                    <div class="option-toggles">
+                                        <label class="toggle-option active">
+                                            <input type="radio" name="media_type" value="image" checked hidden>
+                                            <span><i class="bi bi-image"></i> Image</span>
+                                        </label>
+                                        <label class="toggle-option">
+                                            <input type="radio" name="media_type" value="audio" hidden>
+                                            <span><i class="bi bi-music-note"></i> Audio</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="file-drop-area">
+                                        <div class="file-icon">
+                                            <i class="bi bi-file-earmark-image"></i>
+                                        </div>
+                                        <div class="file-message">
+                                            <span class="main-text">Drop your file here</span>
+                                            <span class="sub-text">or click to browse</span>
+                                        </div>
+                                        <input class="file-input" type="file" id="fileToEncrypt" name="file" accept=".png,.jpg,.jpeg,.gif,.bmp,.wav,.mp3,.ogg,.flac,.m4a,.aac">
+                                    </div>
+                                    <div class="file-info">Supported: PNG, JPG, GIF, BMP, WAV, MP3, OGG, FLAC, etc.</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="messageToHide" class="form-label">
+                                        <i class="bi bi-chat-square-text"></i> Message to Hide
+                                    </label>
+                                    <textarea class="form-control" id="messageToHide" name="message" rows="4" required placeholder="Enter your secret message here..."></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="password-options">
+                                        <div class="password-toggle">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="autoGeneratePassword" name="auto_generate" value="true">
+                                                <span class="slider"></span>
+                                            </label>
+                                            <div class="toggle-label">
+                                                <span>Auto-generate secure password</span>
+                                                <small>Stored in the file for seamless decryption</small>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="password-input-wrap" id="passwordInputGroup">
+                                            <label for="encryptPassword" class="form-label">
+                                                <i class="bi bi-shield-lock"></i> Password
+                                            </label>
+                                            <input type="password" class="form-control" id="encryptPassword" name="password" placeholder="Enter a strong password">
+                                            <small class="password-info">Not required if auto-generate is enabled</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-lock"></i> Encrypt & Hide
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="encryptionResult" class="result-area"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Decrypt Tab -->
+                    <div class="tab-pane" id="decrypt-tab">
+                        <div class="tool-container">
+                            <form id="decryptForm" enctype="multipart/form-data" class="modern-form">
+                                <div class="form-group media-selector">
+                                    <div class="option-label">Choose media type:</div>
+                                    <div class="option-toggles">
+                                        <label class="toggle-option active">
+                                            <input type="radio" name="media_type" value="image" checked hidden>
+                                            <span><i class="bi bi-image"></i> Image</span>
+                                        </label>
+                                        <label class="toggle-option">
+                                            <input type="radio" name="media_type" value="audio" hidden>
+                                            <span><i class="bi bi-music-note"></i> Audio</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="file-drop-area">
+                                        <div class="file-icon">
+                                            <i class="bi bi-file-earmark-binary"></i>
+                                        </div>
+                                        <div class="file-message">
+                                            <span class="main-text">Drop your file here</span>
+                                            <span class="sub-text">or click to browse</span>
+                                        </div>
+                                        <input class="file-input" type="file" id="fileToDecrypt" name="file" accept=".png,.jpg,.jpeg,.wav,.bmp,.gif">
+                                    </div>
+                                    <div class="file-info">Supports all image formats and WAV audio files</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="decryptPassword" class="form-label">
+                                        <i class="bi bi-key"></i> Password (Optional)
+                                    </label>
+                                    <input type="password" class="form-control" id="decryptPassword" name="password" placeholder="Password will be auto-extracted if available">
+                                    <small class="form-text">Password will be automatically extracted from the file if available</small>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="bi bi-unlock"></i> Extract & Decrypt
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="decryptionResult" class="result-area"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inject SVG with animations into the page but hide it -->
+    <div id="workflow-animations-svg" style="display: none;">
+        <object type="image/svg+xml" data="/static/img/workflow-animations.svg"></object>
+    </div>
+    
+    <!-- Workflow Visualization Section -->
+    <section class="workflow-visualization" id="workflow">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>How It Works</h2>
+                <p>Visualizing the steganography workflow process</p>
+            </div>
+            
+            <div class="workflow-tabs">
+                <button class="workflow-tab active" data-workflow="encrypt">
+                    <i class="bi bi-lock-fill"></i> Encryption Process
+                </button>
+                <button class="workflow-tab" data-workflow="decrypt">
+                    <i class="bi bi-unlock-fill"></i> Decryption Process
+                </button>
+            </div>
+            
+            <!-- Encrypt Workflow -->
+            <div class="workflow-container" id="encrypt-workflow-container">
+                <div class="workflow-title">
+                    <i class="bi bi-lock-fill"></i> Encryption & Hiding Process
+                </div>
+                
+                <div class="animation-container"></div>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-description">
+                            <strong>Select a carrier file</strong> - Choose an image or audio file that will hide your secret message. Any format is supported, but lossless formats work best.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-description">
+                            <strong>Enter your secret message</strong> - Type the confidential message you want to hide inside the carrier file.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-description">
+                            <strong>Compression process</strong> - Your message is compressed to minimize its size, allowing you to hide more data in the carrier file without noticeable changes.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-description">
+                            <strong>Provide a password</strong> - Enter a strong password or let the system auto-generate a secure one. This password will be used to encrypt your message.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-description">
+                            <strong>Encryption process</strong> - The system encrypts your compressed message using AES-256 encryption with your password, ensuring nobody can read it without the password.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">6</div>
+                        <div class="step-description">
+                            <strong>Steganography process</strong> - The encrypted message is hidden within the pixels or audio samples of your file using LSB (Least Significant Bit) steganography.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">7</div>
+                        <div class="step-description">
+                            <strong>Download stego file</strong> - The resulting file looks and functions exactly like the original, but now contains your hidden encrypted message.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decrypt Workflow -->
+            <div class="workflow-container" id="decrypt-workflow-container" style="display: none;">
+                <div class="workflow-title">
+                    <i class="bi bi-unlock-fill"></i> Extraction & Decryption Process
+                </div>
+                
+                <div class="animation-container"></div>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-description">
+                            <strong>Upload stego file</strong> - Upload the file that contains a hidden message. This should be the output file from the encryption process.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-description">
+                            <strong>Extraction process</strong> - The system scans the file for modifications in the LSB data and extracts the hidden encrypted message.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-description">
+                            <strong>Password retrieval</strong> - If the password was stored in the file, it's automatically extracted. Otherwise, you'll need to provide the password manually.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-description">
+                            <strong>Decryption process</strong> - Using the password, the system decrypts the hidden message, converting the scrambled data back to readable format.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-description">
+                            <strong>Decompression process</strong> - The system decompresses the decrypted data to restore the original message to its full form.
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="step-number">6</div>
+                        <div class="step-description">
+                            <strong>View secret message</strong> - The original secret message is displayed, exactly as it was before encryption and compression.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Key Features</h2>
+                <p>Powerful tools to secure your communications</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <h4 class="feature-title">Enhanced Security</h4>
+                    <p class="feature-description">AES-256 encryption with password protection. Auto-generate secure passwords that are stored within the media file for seamless decryption.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <h4 class="feature-title">Multiple Media Types</h4>
+                    <p class="feature-description">Hide your messages in any image format (PNG, JPG, JPEG, BMP, GIF) or audio files (WAV). Automatic conversion for all formats.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-file-zip"></i>
+                    </div>
+                    <h4 class="feature-title">Data Compression</h4>
+                    <p class="feature-description">Advanced compression techniques to minimize message size before encryption, allowing you to hide more data with minimal impact on the carrier file.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-key"></i>
+                    </div>
+                    <h4 class="feature-title">Auto-Generated Passwords</h4>
+                    <p class="feature-description">Let the system create strong passwords that are embedded directly within the media file for easy retrieval.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-code-slash"></i>
+                    </div>
+                    <h4 class="feature-title">API Access</h4>
+                    <p class="feature-description">Access all functionality through a RESTful API for integration with your own applications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Important Notes Section -->
+    <section class="notes-section">
+        <div class="container">
+            <div class="notes-card">
+                <div class="notes-header">
+                    <h3><i class="bi bi-info-circle"></i> Important Notes</h3>
+                </div>
+                <div class="notes-body">
+                    <ul class="notes-list">
+                        <li><i class="bi bi-check2-circle"></i> Support for all image formats including JPG/JPEG, PNG, BMP, and GIF</li>
+                        <li><i class="bi bi-exclamation-triangle"></i> JPEG files are automatically converted to PNG for steganography due to lossy compression</li>
+                        <li><i class="bi bi-key"></i> When using auto-generated passwords, they are stored within the file and automatically extracted during decryption</li>
+                        <li><i class="bi bi-music-note"></i> For audio files, WAV format is used for steganography (other formats are converted)</li>
+                        <li><i class="bi bi-file-zip"></i> All messages are compressed before encryption to maximize storage efficiency and security</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation -->
+    <section class="api-section" id="api">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>API Documentation</h2>
+                <p>Integrate steganography capabilities into your apps</p>
+            </div>
+            
+            <div class="api-card">
+                <div class="api-description">
+                    <p>This web interface is powered by a REST API that you can also use directly:</p>
+                </div>
+                
+                <div class="api-endpoints">
+                    <div class="api-endpoint">
+                        <h5>Health Check</h5>
+                        <code>GET /api/health</code>
+                        <p>Returns the health status of the API.</p>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <h5>Capabilities</h5>
+                        <code>GET /api/capabilities</code>
+                        <p>Returns the capabilities of the API.</p>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <h5>Encrypt and Hide</h5>
+                        <code>POST /api/encrypt</code>
+                        <p>Form data:</p>
+                        <ul>
+                            <li><code>file</code>: The media file to hide data in</li>
+                            <li><code>message</code>: The message to encrypt and hide</li>
+                            <li><code>password</code>: The encryption password</li>
+                            <li><code>auto_generate</code>: Whether to auto-generate a password</li>
+                            <li><code>media_type</code>: Either "image" or "audio"</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <h5>Extract and Decrypt</h5>
+                        <code>POST /api/decrypt</code>
+                        <p>Form data:</p>
+                        <ul>
+                            <li><code>file</code>: The media file containing hidden data</li>
+                            <li><code>password</code>: The decryption password (optional if password is stored in file)</li>
+                            <li><code>media_type</code>: Either "image" or "audio"</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <h5>Download File</h5>
+                        <code>GET /api/download/{filename}</code>
+                        <p>Downloads a processed file from the server.</p>
+                    </div>
+                </div>
+                
+                <p class="api-link">For more information, check out the <a href="https://github.com/yourusername/steganography-api" target="_blank">GitHub repository</a> or use the included command-line client.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="copyright">
+                    <p>Advanced Steganography Tool &copy; 2025 | <i class="bi bi-shield-check"></i> Secure by Design</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#"><i class="bi bi-github"></i></a>
+                    <a href="#"><i class="bi bi-twitter"></i></a>
+                    <a href="#"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/workflow-animations.js"></script>
+</body>
+</html> 

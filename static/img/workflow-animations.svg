@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" style="display:none">
+  <!-- Encryption Workflow Animation -->
+  <g id="encrypt-workflow">
+    <!-- File Icon -->
+    <g id="encrypt-file">
+      <rect x="50" y="120" width="80" height="100" rx="5" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <path d="M50 140 L130 140" stroke="#6366f1" stroke-width="2"/>
+      <path d="M70 160 L110 160" stroke="#6366f1" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M70 180 L110 180" stroke="#6366f1" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M70 200 L110 200" stroke="#6366f1" stroke-width="2" stroke-dasharray="2 2"/>
+    </g>
+    
+    <!-- Message Icon -->
+    <g id="encrypt-message">
+      <rect x="150" y="130" width="80" height="80" rx="5" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <path d="M165 150 L215 150" stroke="#6366f1" stroke-width="2"/>
+      <path d="M165 170 L205 170" stroke="#6366f1" stroke-width="2"/>
+      <path d="M165 190 L210 190" stroke="#6366f1" stroke-width="2"/>
+    </g>
+    
+    <!-- Compression Step Icon -->
+    <g id="encrypt-compression">
+      <rect x="250" y="130" width="80" height="80" rx="5" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <path d="M270 150 l40 0" stroke="#6366f1" stroke-width="2"/>
+      <path d="M275 165 l30 0" stroke="#6366f1" stroke-width="2"/>
+      <path d="M280 180 l20 0" stroke="#6366f1" stroke-width="2"/>
+      <path d="M285 195 l10 0" stroke="#6366f1" stroke-width="2"/>
+      <!-- Compression arrows -->
+      <path d="M265 145 l0 55 l10 -10 m-10 10 l-10 -10" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+      <path d="M315 145 l0 55 l10 -10 m-10 10 l-10 -10" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Key Icon -->
+    <g id="encrypt-key">
+      <path d="M360 170 C360 153.4 343.6 140 323 140 C302.4 140 286 153.4 286 170 C286 186.6 302.4 200 323 200 C329.2 200 335.0 198.6 340 196.2 L359 215.2 L368 206.2 L359 197.2 L368 188.2 L359 179.2 L349 189.2 C353.2 183.8 356 177.2 356 170 Z" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <circle cx="315" cy="170" r="10" fill="#6366f1"/>
+    </g>
+    
+    <!-- Encryption Process Icon -->
+    <g id="encrypt-process">
+      <rect x="400" y="110" width="100" height="120" rx="10" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <circle cx="450" cy="170" r="40" fill="none" stroke="#6366f1" stroke-width="2"/>
+      <path d="M430 170 L470 170 M450 150 L450 190" stroke="#6366f1" stroke-width="3"/>
+    </g>
+    
+    <!-- Output File Icon -->
+    <g id="encrypt-output">
+      <rect x="530" y="120" width="80" height="100" rx="5" fill="#f3f4f6" stroke="#10b981" stroke-width="2"/>
+      <path d="M530 140 L610 140" stroke="#10b981" stroke-width="2"/>
+      <path d="M550 160 L590 160" stroke="#10b981" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M550 180 L590 180" stroke="#10b981" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M550 200 L590 200" stroke="#10b981" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M550 220 L590 220" stroke="#10b981" stroke-width="2" stroke-dasharray="0"/>
+      <circle cx="570" cy="170" r="25" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="2"/>
+      <path d="M559 170 L581 170 M570 159 L570 181" stroke="#10b981" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Animation Arrows -->
+    <g id="encrypt-arrows">
+      <path id="arrow1" d="M130 170 L150 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="arrow2" d="M230 170 L250 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="arrow3" d="M330 170 L368 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="arrow4" d="M500 170 L530 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    
+    <!-- Labels -->
+    <g id="encrypt-labels" font-family="Inter, sans-serif" font-size="12" text-anchor="middle">
+      <text x="90" y="240" fill="#6366f1">Original File</text>
+      <text x="190" y="240" fill="#6366f1">Secret Message</text>
+      <text x="290" y="240" fill="#6366f1">Compression</text>
+      <text x="323" y="240" fill="#6366f1">Password</text>
+      <text x="450" y="250" fill="#6366f1">Encryption Process</text>
+      <text x="570" y="240" fill="#10b981">Stego File</text>
+    </g>
+  </g>
+  
+  <!-- Decryption Workflow Animation -->
+  <g id="decrypt-workflow">
+    <!-- Input File Icon -->
+    <g id="decrypt-file">
+      <rect x="90" y="120" width="80" height="100" rx="5" fill="#f3f4f6" stroke="#10b981" stroke-width="2"/>
+      <path d="M90 140 L170 140" stroke="#10b981" stroke-width="2"/>
+      <path d="M110 160 L150 160" stroke="#10b981" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M110 180 L150 180" stroke="#10b981" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M110 200 L150 200" stroke="#10b981" stroke-width="2" stroke-dasharray="2 2"/>
+      <circle cx="130" cy="170" r="25" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="2"/>
+      <path d="M119 170 L141 170 M130 159 L130 181" stroke="#10b981" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Extraction Process Icon -->
+    <g id="decrypt-process">
+      <rect x="200" y="110" width="80" height="120" rx="10" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <circle cx="240" cy="170" r="30" fill="none" stroke="#6366f1" stroke-width="2"/>
+      <path d="M225 170 L255 170 M225 155 L255 185 M255 155 L225 185" stroke="#6366f1" stroke-width="2"/>
+    </g>
+    
+    <!-- Encrypted Data Icon -->
+    <g id="decrypt-data">
+      <rect x="310" y="130" width="80" height="80" rx="5" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <text x="350" y="180" font-family="monospace" font-size="12" fill="#6366f1" text-anchor="middle">01010101</text>
+      <path d="M325 160 L375 160" stroke="#6366f1" stroke-width="2"/>
+    </g>
+    
+    <!-- Key Icon -->
+    <g id="decrypt-key">
+      <path d="M470 170 C470 153.4 453.6 140 433 140 C412.4 140 396 153.4 396 170 C396 186.6 412.4 200 433 200 C439.2 200 445.0 198.6 450 196.2 L469 215.2 L478 206.2 L469 197.2 L478 188.2 L469 179.2 L459 189.2 C463.2 183.8 466 177.2 466 170 Z" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <circle cx="425" cy="170" r="10" fill="#6366f1"/>
+    </g>
+    
+    <!-- Decryption Process Icon -->
+    <g id="decrypt-process2">
+      <rect x="500" y="110" width="80" height="120" rx="10" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <circle cx="540" cy="170" r="30" fill="none" stroke="#6366f1" stroke-width="2"/>
+      <path d="M525 170 L555 170 M540 155 L540 185" stroke="#6366f1" stroke-width="3" transform="rotate(45, 540, 170)"/>
+    </g>
+    
+    <!-- Decompression Step Icon -->
+    <g id="decrypt-decompression">
+      <rect x="610" y="130" width="80" height="80" rx="5" fill="#f3f4f6" stroke="#6366f1" stroke-width="2"/>
+      <path d="M630 150 l40 0" stroke="#6366f1" stroke-width="2"/>
+      <path d="M630 165 l40 0" stroke="#6366f1" stroke-width="2"/>
+      <path d="M630 180 l40 0" stroke="#6366f1" stroke-width="2"/>
+      <path d="M630 195 l40 0" stroke="#6366f1" stroke-width="2"/>
+      <!-- Decompression arrows -->
+      <path d="M625 200 l0 -55 l10 10 m-10 -10 l-10 10" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+      <path d="M675 200 l0 -55 l10 10 m-10 -10 l-10 10" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Decrypted Message -->
+    <g id="decrypt-message">
+      <rect x="720" y="130" width="80" height="80" rx="5" fill="#f3f4f6" stroke="#10b981" stroke-width="2"/>
+      <path d="M735 150 L785 150" stroke="#10b981" stroke-width="2"/>
+      <path d="M735 170 L775 170" stroke="#10b981" stroke-width="2"/>
+      <path d="M735 190 L780 190" stroke="#10b981" stroke-width="2"/>
+    </g>
+    
+    <!-- Animation Arrows -->
+    <g id="decrypt-arrows">
+      <path id="darrow1" d="M170 170 L200 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="darrow2" d="M280 170 L310 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="darrow3" d="M390 170 L396 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="darrow4" d="M478 170 L500 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="darrow5" d="M580 170 L610 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path id="darrow6" d="M690 170 L720 170" stroke="#6366f1" stroke-width="2" stroke-dasharray="10 5">
+        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    
+    <!-- Labels -->
+    <g id="decrypt-labels" font-family="Inter, sans-serif" font-size="12" text-anchor="middle">
+      <text x="130" y="240" fill="#6366f1">Stego File</text>
+      <text x="240" y="250" fill="#6366f1">Extraction</text>
+      <text x="350" y="240" fill="#6366f1">Encrypted Data</text>
+      <text x="433" y="240" fill="#6366f1">Password</text>
+      <text x="540" y="250" fill="#6366f1">Decryption</text>
+      <text x="650" y="240" fill="#6366f1">Decompression</text>
+      <text x="760" y="240" fill="#10b981">Message</text>
+    </g>
+  </g>
+</svg> 

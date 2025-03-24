@@ -1,0 +1,17 @@
+# Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
+
+# Comment to be posted to on first time issues
+newIssueWelcomeComment: >
+  Thanks for opening your first issue in SteganoTool! 🎉 We appreciate your contribution and will review this soon.
+
+# Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
+
+# Comment to be posted to on PRs from first time contributors
+newPRWelcomeComment: >
+  Thank you for submitting your first pull request to SteganoTool! 🚀 We'll review your changes shortly.
+
+# Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
+
+# Comment to be posted to on pull requests merged by a first time user
+firstPRMergeComment: >
+  Congratulations on getting your first SteganoTool pull request merged! 🎊 We're excited to have your contribution as part of the project. 
