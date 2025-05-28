@@ -17,6 +17,7 @@ import urllib.request
 import zipfile
 import shutil
 import zlib  # Add zlib for compression
+import qrcode  # Import qrcode library
 
 def derive_key(password, salt=None):
     """Derive a 32-byte key from a password using SHA-256"""
@@ -26,25 +27,81 @@ def derive_key(password, salt=None):
     return key, salt
 
 def compress_data(data):
-    """Compress data using zlib with maximum compression level"""
+    """Compress data using zlib with maximum compression level, but only if it actually reduces size"""
     if isinstance(data, str):
         data = data.encode('utf-8')
-    return zlib.compress(data, level=9)  # Use maximum compression level
+    
+    original_size = len(data)
+    
+    # Try compressing the data
+    compressed = zlib.compress(data, level=9)  # Use maximum compression level
+    compressed_size = len(compressed)
+    
+    # Only return the compressed data if it's actually smaller
+    if compressed_size < original_size:
+        compression_ratio = ((original_size - compressed_size) / original_size) * 100
+        print(f"DEBUG: Compression reduced size from {original_size} to {compressed_size} bytes ({compression_ratio:.1f}% reduction)")
+        return compressed, True, original_size, compressed_size
+    else:
+        print(f"DEBUG: Compression would increase size from {original_size} to {compressed_size} bytes, using original data")
+        # Add a marker byte (0xFF) to indicate uncompressed data
+        return b'\xFF' + data, False, original_size, original_size
 
 def decompress_data(compressed_data):
-    """Decompress data that was compressed using zlib"""
+    """Decompress data that was compressed using zlib, or return original data if not compressed"""
     try:
+        # Check if data is marked as uncompressed (first byte is 0xFF)
+        if compressed_data and len(compressed_data) > 0 and compressed_data[0] == 0xFF:
+            # Return the original data (without the marker byte)
+            print("DEBUG: Data was not compressed, returning original data")
+            return compressed_data[1:]
+        
+        # Otherwise decompress the data
         decompressed = zlib.decompress(compressed_data)
+        print(f"DEBUG: Successfully decompressed data from {len(compressed_data)} to {len(decompressed)} bytes")
         return decompressed
     except zlib.error as e:
+        print(f"DEBUG: Decompression error: {str(e)}")
         raise ValueError(f"Decompression error: {str(e)}")
+
+def get_compression_info(message):
+    """Get compression information for a message without actually compressing it for encryption"""
+    if isinstance(message, str):
+        message = message.encode('utf-8')
+    
+    original_size = len(message)
+    
+    # Try compressing the data
+    compressed = zlib.compress(message, level=9)
+    compressed_size = len(compressed)
+    
+    # Determine if compression would be beneficial
+    if compressed_size < original_size:
+        compression_ratio = ((original_size - compressed_size) / original_size) * 100
+        would_compress = True
+    else:
+        compression_ratio = 0
+        would_compress = False
+    
+    return {
+        'original_size': original_size,
+        'compressed_size': compressed_size if would_compress else original_size,
+        'compression_ratio': compression_ratio,
+        'would_compress': would_compress
+    }
 
 def encrypt_message(message, password):
     """Encrypt a message using AES-256-CBC with a password"""
     # Compress the message first
     if isinstance(message, str):
         message = message.encode('utf-8')
-    compressed_message = compress_data(message)
+    
+    compressed_message, is_compressed, original_size, compressed_size = compress_data(message)
+    
+    # Check if the data was actually compressed (marker byte 0xFF means not compressed)
+    if not is_compressed:
+        # Remove the marker byte before encryption
+        compressed_message = compressed_message[1:]
     
     # Derive key from password
     key, salt = derive_key(password)
@@ -54,22 +111,34 @@ def encrypt_message(message, password):
     
     # Create cipher object and encrypt
     cipher = AES.new(key, AES.MODE_CBC, iv)
+    
+    # Add a marker byte after salt and IV to indicate compression status
+    # Format: [salt][IV][compression_marker][ciphertext]
+    if is_compressed:
+        # 0x00 means data is compressed
+        compression_marker = b'\x00'
+    else:
+        # 0xFF means data is not compressed
+        compression_marker = b'\xFF'
+    
+    # Pad and encrypt the message
     ciphertext = cipher.encrypt(pad(compressed_message, AES.block_size))
     
-    # Return salt + IV + ciphertext
-    return salt + iv + ciphertext
+    # Return salt + IV + compression marker + ciphertext
+    return salt + iv + compression_marker + ciphertext
 
 def decrypt_message(encrypted_data, password):
     """Decrypt a message using AES-256-CBC with a password"""
     try:
         # Check if we have enough data
-        if len(encrypted_data) < 33:  # At least salt(16) + iv(16) + 1 byte of data
+        if len(encrypted_data) < 34:  # At least salt(16) + iv(16) + compression marker(1) + 1 byte of data
             return "Decryption error: No valid encrypted data found. The file may not contain a hidden message."
         
-        # Extract salt, IV, and ciphertext
+        # Extract salt, IV, compression marker, and ciphertext
         salt = encrypted_data[:16]
         iv = encrypted_data[16:32]
-        ciphertext = encrypted_data[32:]
+        compression_marker = encrypted_data[32:33]  # Single byte indicating compression status
+        ciphertext = encrypted_data[33:]  # Rest is ciphertext
         
         # Derive key from password and salt
         key, _ = derive_key(password, salt)
@@ -78,10 +147,17 @@ def decrypt_message(encrypted_data, password):
         cipher = AES.new(key, AES.MODE_CBC, iv)
         decrypted = unpad(cipher.decrypt(ciphertext), AES.block_size)
         
-        # Decompress the decrypted data
-        decompressed = decompress_data(decrypted)
+        # Check compression marker to determine if we need to decompress
+        is_compressed = compression_marker != b'\xFF'
         
-        return decompressed.decode('utf-8')
+        if is_compressed:
+            # Decompress the decrypted data
+            decompressed = decompress_data(decrypted)
+            return decompressed.decode('utf-8')
+        else:
+            # Data wasn't compressed, just decode it
+            return decrypted.decode('utf-8')
+            
     except ValueError as e:
         if "Padding is incorrect" in str(e):
             return "Decryption error: Incorrect password or corrupted data."
@@ -759,3 +835,212 @@ def convert_and_hide_in_image(input_path, output_path, data):
         import traceback
         traceback.print_exc()
         raise
+
+def generate_qr_code(data, output_path, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=10, border=4):
+    """
+    Generate a QR code and save it to the specified path
+    
+    Args:
+        data: The data to encode in the QR code
+        output_path: The path to save the QR code image
+        error_correction: QR error correction level (L, M, Q, H)
+        box_size: Size of each box in the QR code
+        border: Border size in boxes
+        
+    Returns:
+        Path to the generated QR code
+    """
+    try:
+        # Create QR code instance
+        qr = qrcode.QRCode(
+            version=None,  # Auto determine version
+            error_correction=error_correction,
+            box_size=box_size,
+            border=border,
+        )
+        
+        # Add data to the QR code
+        qr.add_data(data)
+        qr.make(fit=True)
+        
+        # Create an image from the QR code
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Save the image
+        img.save(output_path)
+        
+        return output_path
+    except Exception as e:
+        print(f"Error generating QR code: {str(e)}")
+        raise
+
+def hide_message_in_qr(message, password, output_path, background_image=None, style="standard"):
+    """
+    Generate a QR code with a hidden message
+    
+    Args:
+        message: The message to hide
+        password: Password for encryption
+        output_path: Path to save the QR code
+        background_image: Optional background image path
+        style: QR code style ("standard", "embedded", "fancy")
+        
+    Returns:
+        Path to the generated QR code
+    """
+    try:
+        # Encrypt the message
+        if isinstance(message, str):
+            message_bytes = message.encode('utf-8')
+        else:
+            message_bytes = message
+            
+        encrypted_data = encrypt_message(message_bytes, password)
+        
+        # Create the QR code with embedded password
+        data_to_encode = encrypted_data + b'\x01' + password.encode('utf-8')
+        
+        # Convert binary data to a base64 string for QR encoding
+        encoded_data = binascii.hexlify(data_to_encode).decode('ascii')
+        
+        # Generate QR code
+        qr = qrcode.QRCode(
+            version=None,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(encoded_data)
+        qr.make(fit=True)
+        
+        # Create QR code image
+        if style == "standard":
+            img = qr.make_image(fill_color="black", back_color="white")
+        elif style == "fancy":
+            # Create a colored QR code
+            img = qr.make_image(fill_color="blue", back_color="white")
+        elif style == "embedded":
+            # Create QR with lower contrast for better blending
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+        # Handle background image if provided
+        if background_image and os.path.exists(background_image):
+            # Open background image
+            bg = Image.open(background_image)
+            
+            # Resize background to match QR code size
+            bg = bg.resize(img.size)
+            
+            if style == "embedded":
+                # Blend QR code with background image
+                img = Image.blend(bg.convert("RGBA"), img.convert("RGBA"), 0.7)
+            else:
+                # Center QR code on background
+                bg.paste(img, (0, 0))
+                img = bg
+        
+        # Save the final image
+        img.save(output_path)
+        
+        return output_path
+    except Exception as e:
+        print(f"Error hiding message in QR code: {str(e)}")
+        raise
+
+def extract_message_from_qr(qr_code_path, password=None):
+    """
+    Extract hidden message from a QR code
+    
+    Args:
+        qr_code_path: Path to the QR code image
+        password: Optional password for decryption (if not embedded)
+        
+    Returns:
+        The extracted message
+    """
+    try:
+        # Read QR code
+        img = Image.open(qr_code_path)
+        
+        # Try using pyzbar first, which tends to be more reliable
+        try:
+            from pyzbar.pyzbar import decode
+            decoded_objects = decode(img)
+            if decoded_objects:
+                print("Successfully decoded QR with pyzbar")
+                decoded_info = [decoded_objects[0].data.decode('ascii')]
+            else:
+                # If pyzbar fails, try OpenCV
+                print("Pyzbar couldn't decode, trying OpenCV...")
+                # Convert PIL image to OpenCV format properly
+                # Convert to RGB first to ensure we have a 3-channel image
+                img_rgb = img.convert('RGB')
+                cv_img = np.array(img_rgb)
+                # Convert RGB to BGR (OpenCV format)
+                cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)
+                
+                # Initialize QR code detector
+                detector = cv2.QRCodeDetector()
+                
+                # Detect and decode
+                retval, decoded_info, points, straight_qrcode = detector.detectAndDecodeMulti(cv_img)
+                
+                if not retval or len(decoded_info) == 0:
+                    return "No QR code found in the image"
+        except Exception as e:
+            print(f"Error in QR code reading: {str(e)}")
+            # Last resort: try OpenCV if pyzbar failed to import or process
+            try:
+                print("Trying OpenCV as fallback...")
+                img_rgb = img.convert('RGB')
+                cv_img = np.array(img_rgb)
+                cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)
+                
+                detector = cv2.QRCodeDetector()
+                retval, decoded_info, points, straight_qrcode = detector.detectAndDecodeMulti(cv_img)
+                
+                if not retval or len(decoded_info) == 0:
+                    return "Failed to extract QR code data. The image may not contain a valid QR code."
+            except Exception as nested_e:
+                return f"Failed to extract QR code data. Error: {str(nested_e)}"
+        
+        # Convert hex string back to binary data
+        try:
+            encrypted_data = binascii.unhexlify(decoded_info[0])
+        except (binascii.Error, IndexError) as e:
+            return f"Error: Could not decode QR code data. The QR code may not contain steganographic content. Details: {str(e)}"
+        
+        # Look for embedded password (marker byte 0x01 indicates password follows)
+        embedded_password = None
+        password_found = False
+        data = encrypted_data  # Default if no marker is found
+        
+        # Search for the marker byte
+        for i in range(len(encrypted_data) - 1):
+            if encrypted_data[i] == 0x01:  # Found marker
+                data = encrypted_data[:i]
+                try:
+                    embedded_password = encrypted_data[i+1:].decode('utf-8')
+                    password_found = True
+                    print(f"Found embedded password: {embedded_password}")
+                    break
+                except UnicodeDecodeError:
+                    print("Failed to decode embedded password - possible corruption")
+        
+        # Always use embedded password if available
+        if password_found:
+            password = embedded_password
+        # Only use provided password if no embedded password was found
+        elif not password:
+            return "No password provided or found in the QR code"
+        
+        # Decrypt the message
+        try:
+            decrypted_message = decrypt_message(data, password)
+            return decrypted_message
+        except Exception as e:
+            return f"Error decrypting message: {str(e)}. The password may be incorrect or the data corrupted."
+        
+    except Exception as e:
+        print(f"Error extracting message from QR code: {str(e)}")
+        return f"Error: {str(e)}"

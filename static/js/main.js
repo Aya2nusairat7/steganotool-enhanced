@@ -1,4 +1,25 @@
 $(document).ready(function() {
+    // Set up AJAX to always include the auth token in request headers if available
+    $.ajaxSetup({
+        beforeSend: function(xhr) {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+            }
+        }
+    });
+    
+    // Handle 401 Unauthorized responses globally
+    $(document).ajaxError(function(event, jqXHR, settings, thrownError) {
+        if (jqXHR.status === 401) {
+            // Store the current URL to redirect back after login
+            localStorage.setItem('redirect_after_login', window.location.href);
+            
+            // Redirect to sign-in page
+            window.location.href = '/sign-in';
+        }
+    });
+    
     // Animation for page elements on load
     setTimeout(function() {
         $(".hero-title, .hero-subtitle, .hero-buttons, .hero-image").addClass("animate-in");
@@ -51,8 +72,19 @@ $(document).ready(function() {
         
         if (mediaType === "image") {
             fileDropArea.find(".file-icon i").attr("class", "bi bi-file-earmark-image");
+            // Hide QR specific options and show standard file area
+            $(this).closest("form").find(".qr-specific-options").hide();
+            $(this).closest("form").find("#standard-file-area").show();
         } else if (mediaType === "audio") {
             fileDropArea.find(".file-icon i").attr("class", "bi bi-file-earmark-music");
+            // Hide QR specific options and show standard file area
+            $(this).closest("form").find(".qr-specific-options").hide();
+            $(this).closest("form").find("#standard-file-area").show();
+        } else if (mediaType === "qr_code") {
+            fileDropArea.find(".file-icon i").attr("class", "bi bi-qr-code");
+            // Show QR specific options and hide standard file area
+            $(this).closest("form").find(".qr-specific-options").show();
+            $(this).closest("form").find("#standard-file-area").hide();
         }
     });
     
@@ -148,6 +180,9 @@ $(document).ready(function() {
         btn.html('<div class="loading"><div></div><div></div><div></div></div> Processing...');
         btn.prop('disabled', true);
         
+        // Get selected media type
+        const mediaType = $(this).find('input[name="media_type"]:checked').val();
+        
         // Validate form manually when auto-generate is not checked
         if (!$("#autoGeneratePassword").is(":checked") && !$("#encryptPassword").val()) {
             showMessage("#encryptionResult", "error", "Please provide a password or enable auto-generate option.");
@@ -158,8 +193,14 @@ $(document).ready(function() {
 
         var formData = new FormData(this);
         
+        // Use different API endpoint based on media type
+        let apiEndpoint = '/api/encrypt';
+        if (mediaType === "qr_code") {
+            apiEndpoint = '/api/encrypt-qr';
+        }
+        
         $.ajax({
-            url: '/api/encrypt',
+            url: apiEndpoint,
             type: 'POST',
             data: formData,
             contentType: false,
@@ -178,6 +219,35 @@ $(document).ready(function() {
                                 <p><strong><i class="bi bi-file-earmark"></i> Output File:</strong> ${response.output_filename}</p>
                     `;
                     
+                    // Add encryption method information
+                    let encryptionMethod = response.encryption_method || "AES-256";
+                    let mediaTypeDisplay = response.hiding_technique || "";
+                    
+                    if (!mediaTypeDisplay) {
+                        if (mediaType === "image" || response.media_type === "image") {
+                            mediaTypeDisplay = "LSB Image Steganography";
+                        } else if (mediaType === "audio" || response.media_type === "audio") {
+                            mediaTypeDisplay = "Audio Sample Steganography";
+                        } else if (mediaType === "qr_code" || response.media_type === "qr_code") {
+                            mediaTypeDisplay = "QR Code Steganography";
+                        }
+                    }
+                    
+                    resultContent += `
+                        <div class="encryption-info">
+                            <p><strong><i class="bi bi-shield-lock"></i> Encryption Method:</strong> ${encryptionMethod}</p>
+                            <p><strong><i class="bi bi-layers"></i> Hiding Technique:</strong> ${mediaTypeDisplay}</p>
+                    `;
+                    
+                    // Add compression info if available
+                    if (response.compression_ratio) {
+                        resultContent += `
+                            <p><strong><i class="bi bi-file-zip"></i> Compression:</strong> ${Math.round(response.compression_ratio)}% reduction in size</p>
+                        `;
+                    }
+                    
+                    resultContent += `</div>`;
+                    
                     if (response.auto_generated_password) {
                         resultContent += `
                             <div class="password-box">
@@ -189,6 +259,17 @@ $(document).ready(function() {
                                 </div>
                                 <p class="password-value">${response.auto_generated_password}</p>
                                 <p class="text-warning mb-0"><small><i class="bi bi-info-circle"></i> This password is stored in the file and will be extracted automatically during decryption.</small></p>
+                            </div>
+                        `;
+                    }
+                    
+                    // Add QR code preview if it's a QR code
+                    if (mediaType === "qr_code" || response.media_type === "qr_code") {
+                        resultContent += `
+                            <div class="qr-preview-box mt-3">
+                                <h5><i class="bi bi-qr-code"></i> QR Code Preview</h5>
+                                <img src="/api/download/${response.output_filename}" class="img-fluid qr-preview-image" style="max-width: 200px;">
+                                <p class="mt-2"><small>Style: ${response.style || 'Standard'}</small></p>
                             </div>
                         `;
                     }
@@ -236,10 +317,19 @@ $(document).ready(function() {
         btn.html('<div class="loading"><div></div><div></div><div></div></div> Processing...');
         btn.prop('disabled', true);
         
+        // Get selected media type
+        const mediaType = $(this).find('input[name="media_type"]:checked').val();
+        
         var formData = new FormData(this);
         
+        // Use different API endpoint based on media type
+        let apiEndpoint = '/api/decrypt';
+        if (mediaType === "qr_code") {
+            apiEndpoint = '/api/decrypt-qr';
+        }
+        
         $.ajax({
-            url: '/api/decrypt',
+            url: apiEndpoint,
             type: 'POST',
             data: formData,
             contentType: false,
@@ -248,76 +338,95 @@ $(document).ready(function() {
                 btn.html(originalBtnText);
                 btn.prop('disabled', false);
                 
-                console.log("Decrypt response:", response); // Debug log
-                
-                // Always show result even for error status
-                if (response) {
-                    let status = response.status || "error";
-                    let alertClass = "alert-danger";
-                    let icon = "bi-exclamation-triangle";
-                    let title = "Error";
-                    
-                    if (status === "success") {
-                        alertClass = "alert-success";
-                        icon = "bi-check-circle";
-                        title = "Success!";
-                    } else if (status === "warning") {
-                        alertClass = "alert-warning";
-                        icon = "bi-exclamation-triangle";
-                        title = "Partial Success";
-                    }
-                    
+                if (response.status === 'success' || response.status === 'warning') {
+                    let alertClass = response.status === 'warning' ? 'alert-warning' : 'alert-success';
                     let resultContent = `
                         <div class="alert ${alertClass} animate-fade-in">
                             <h4 class="alert-heading">
-                                <i class="bi ${icon}"></i> ${title}
+                                <i class="${response.status === 'warning' ? 'bi bi-exclamation-triangle' : 'bi bi-check-circle'}"></i> 
+                                ${response.status === 'warning' ? 'Warning' : 'Success'}!
                             </h4>
                     `;
                     
-                    // Check for password using the correct property name
-                    if (response.password_found && response.used_password) {
+                    if (response.status === 'warning') {
+                        resultContent += `<p>The message was extracted, but there may be issues with the content.</p>`;
+                    } else {
+                        resultContent += `<p>Hidden message successfully extracted and decrypted.</p>`;
+                    }
+                    
+                    resultContent += `<hr>`;
+                    
+                    // Add encryption method information if available
+                    let encryptionMethod = response.encryption_method || "AES-256";
+                    let mediaTypeDisplay = response.hiding_technique || "";
+                    
+                    if (!mediaTypeDisplay) {
+                        if (mediaType === "image" || response.media_type === "image") {
+                            mediaTypeDisplay = "LSB Image Steganography";
+                        } else if (mediaType === "audio" || response.media_type === "audio") {
+                            mediaTypeDisplay = "Audio Sample Steganography";
+                        } else if (mediaType === "qr_code" || response.media_type === "qr_code") {
+                            mediaTypeDisplay = "QR Code Steganography";
+                        }
+                    }
+                    
+                    resultContent += `
+                        <div class="encryption-info">
+                            <p><strong><i class="bi bi-shield-lock"></i> Encryption Method:</strong> ${encryptionMethod}</p>
+                            <p><strong><i class="bi bi-layers"></i> Extraction Technique:</strong> ${mediaTypeDisplay}</p>
+                        </div>
+                    `;
+                    
+                    // Show if password was auto-extracted
+                    if (response.password_found) {
                         resultContent += `
-                            <div class="password-box mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p class="mb-0"><strong><i class="bi bi-key"></i> Extracted Password:</strong></p>
-                                    <button class="btn btn-sm copy-btn" data-clipboard="${response.used_password}">
-                                        <i class="bi bi-clipboard"></i> Copy
-                                    </button>
-                                </div>
-                                <p class="password-value">${response.used_password}</p>
+                            <div class="mb-3">
+                                <p class="text-success"><i class="bi bi-key"></i> <strong>Password was automatically extracted from the file.</strong></p>
                             </div>
                         `;
                     }
                     
-                    // Add the message content if it exists
-                    if (response.message) {
-                        resultContent += `
-                            <div class="decrypted-message-container">
-                                <p><strong><i class="bi bi-chat-left-text"></i> ${status === "error" ? "Error Message:" : "Decrypted Message:"}</strong></p>
-                                <div class="decrypted-message">${response.message.replace(/\n/g, '<br>')}</div>
-                            </div>
-                        `;
-                    }
+                    // Display the message
+                    resultContent += `
+                        <div class="message-box">
+                            <h5><i class="bi bi-chat-square-text"></i> Extracted Message:</h5>
+                            <div class="message-content">${response.message}</div>
+                            <button class="btn btn-sm copy-btn mt-2" data-clipboard="${response.message}">
+                                <i class="bi bi-clipboard"></i> Copy Message
+                            </button>
+                        </div>
+                    </div>
+                    `;
                     
-                    resultContent += `</div>`;
+                    $(decryptionResult).html(resultContent);
                     
-                    showMessage("#decryptionResult", "custom", resultContent);
-                    
-                    // Reset the form UI for next use
-                    resetFormUI($("#decryptForm"));
+                    // Initialize copy buttons
+                    $(".copy-btn").click(function() {
+                        const textToCopy = $(this).attr('data-clipboard');
+                        copyToClipboard(textToCopy);
+                        
+                        // Show copied animation
+                        const originalText = $(this).html();
+                        $(this).html('<i class="bi bi-check"></i> Copied!');
+                        setTimeout(() => {
+                            $(this).html(originalText);
+                        }, 2000);
+                    });
                 } else {
-                    showMessage("#decryptionResult", "error", "No response from server");
+                    showMessage("#decryptionResult", "error", response.message || "Failed to decrypt the file. Please check your password and try again.");
                 }
             },
-            error: function(xhr) {
+            error: function(xhr, status, error) {
                 btn.html(originalBtnText);
                 btn.prop('disabled', false);
                 
-                let errorMsg = "An error occurred during decryption";
+                let errorMsg = "Error occurred while decrypting.";
                 try {
                     const response = JSON.parse(xhr.responseText);
                     errorMsg = response.message || response.error || errorMsg;
-                } catch (e) {}
+                } catch (e) {
+                    console.error("Error parsing error response:", e);
+                }
                 
                 showMessage("#decryptionResult", "error", errorMsg);
             }

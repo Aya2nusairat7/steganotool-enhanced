@@ -47,8 +47,15 @@ def encrypt_message(api_url, file_path, message, password, media_type="image"):
             print(f"Success! Encrypted message ({data['message_length']} chars) into {data['output_filename']}")
             print(f"Original file: {data['original_filename']}")
             print(f"Output file size: {data['file_size'] / 1024:.2f} KB")
-            print(f"Encrypted data size: {data['encrypted_size']} bytes")
-            print(f"Compression ratio: {(1 - data['encrypted_size'] / len(message.encode('utf-8'))) * 100:.1f}%")
+            
+            # Display compression information if available
+            if 'compression_ratio' in data and data['compression_ratio'] > 0:
+                print(f"Compression ratio: {data['compression_ratio']:.1f}% reduction")
+                print(f"Original message size: {data['original_size']} bytes")
+                print(f"Compressed size: {data['compressed_size']} bytes")
+            else:
+                print("No compression applied (would not reduce size)")
+                
             print(f"Output file saved to the current directory")
             return True
         else:

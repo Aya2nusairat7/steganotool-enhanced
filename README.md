@@ -1,11 +1,11 @@
-# SteganoTool
+# Steganography System
 
 <p align="center">
-  <img src="static/img/logo.png" alt="SteganoTool Logo" width="200"/>
+  <img src="static/img/logo.png" alt="Steganography System Logo" width="200"/>
 </p>
 
 <p align="center">
-  A modern steganography tool for hiding secret messages in images and audio files
+  A modern, comprehensive steganography system for hiding secret messages in images, audio files, and QR codes
 </p>
 
 <p align="center">
@@ -17,226 +17,253 @@
 
 <p align="center">
   <a href="#features">Features</a> •
-  <a href="#installation">Installation</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#documentation">Documentation</a> •
   <a href="#usage">Usage</a> •
-  <a href="#how-it-works">How It Works</a> •
+  <a href="#api">API</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
 </p>
 
-## Features
+## 🚀 Features
 
-- **Multiple Media Types**: Hide messages in various media types including images (PNG, JPG, BMP) and audio files (WAV)
-- **Data Compression**: Advanced compression techniques that minimize message size before encryption
-- **Strong Encryption**: AES-256 encryption to protect your hidden messages
-- **Password Management**: Option to auto-generate secure passwords or use your own
-- **Intuitive UI**: Modern web interface for easy message hiding and extraction
-- **Visual Workflow**: Interactive visualizations that help you understand the steganography process
+### Core Capabilities
+- **Multi-Format Support**: Images (PNG, JPG, BMP, GIF) and Audio (WAV, MP3, OGG, FLAC)
+- **Advanced Encryption**: AES-256-CBC with PBKDF2 key derivation (100,000 iterations)
+- **Smart Compression**: Automatic zlib compression with 30-95% size reduction
+- **Password Management**: Auto-generate secure passwords or use custom ones
+- **Password Embedding**: Automatic password embedding in steganographic files
 
-## Installation
+### Interface Options
+- **Modern Web UI**: Responsive, intuitive web interface
+- **REST API**: Complete RESTful API for integration
+- **CLI Client**: Command-line interface for automation
+- **Comprehensive Documentation**: UML diagrams and detailed guides
+
+### QR Code Integration
+- **QR Generation**: Create QR codes with embedded data
+- **QR Steganography**: Hide encrypted messages in QR codes
+- **Multiple Styles**: Standard, fancy, and embedded background styles
+- **Auto-Password**: Automatic password embedding in QR codes
+
+### Security Features
+- **Industry-Standard Encryption**: AES-256-CBC encryption
+- **Secure Key Derivation**: PBKDF2 with salt and high iteration count
+- **Input Validation**: Comprehensive sanitization and validation
+- **Secure File Handling**: Automatic cleanup and secure naming
+- **Authentication**: Token-based API authentication
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
+
+### 🏗️ Architecture & Design
+- **[System Architecture](docs/system_architecture.md)** - UML diagrams and system overview
+- **[API Documentation](docs/api_diagrams.md)** - API flows and endpoint specifications
+- **[Data Models](docs/data_models.md)** - Data structures and relationships
+
+### 📖 User Guides
+- **[Documentation Overview](docs/README.md)** - Complete documentation index
+- **[API Reference](docs/api_reference_detailed.md)** - Detailed endpoint specifications
+- **[Utils Methods](docs/utils_methods.md)** - Core utility functions
+- **[Steganography Process](docs/steganography_process.md)** - Technical implementation
+
+### 🔧 Operations
+- **[Deployment Guide](docs/deployment_guide.md)** - Production deployment
+- **[Security Practices](docs/security_practices.md)** - Security guidelines
+- **[Troubleshooting](docs/troubleshooting_guide.md)** - Issue resolution
+- **[Project Structure](docs/project_index.md)** - Codebase organization
+
+## ⚡ Quick Start
 
 ### Prerequisites
-
 - Python 3.8+
 - pip (Python package installer)
 
-### Setup
+### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/YazeedSalem0/steganotool-enhanced.git
    cd steganotool-enhanced
    ```
 
-2. Install the required dependencies:
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
    ```
 
-## Usage
-
-### Starting the Application
-
-1. Start the application server:
+3. **Start the application:**
    ```bash
    python api.py
    ```
 
-2. Open your web browser and navigate to:
-   ```
-   http://localhost:8080
-   ```
+4. **Access the interface:**
+   - Web UI: http://localhost:8080
+   - API: http://localhost:8080/api/
+   - Health Check: http://localhost:8080/api/health
 
-### Step-by-Step Usage Guide
+## 📋 Usage
 
-#### Hiding a Message in an Image
+### Web Interface
 
-1. **Select an Image**: From the main page, click "Encrypt" and upload an image file (PNG, JPG, or BMP)
-2. **Enter Your Message**: Type your secret message in the text area
-3. **Password Options**: Either enter your own password or select "Auto-generate password"
-4. **Process**: Click "Encrypt" to process your image and hide the message
-5. **Download**: Once processing is complete, download your steganographic image
+1. **Encrypt a Message:**
+   - Upload an image or audio file
+   - Enter your secret message
+   - Choose password options (manual or auto-generate)
+   - Download the steganographic file
 
-#### Extracting a Hidden Message
+2. **Decrypt a Message:**
+   - Upload the steganographic file
+   - Enter password (if not embedded)
+   - View the extracted message
 
-1. **Upload Stego File**: From the main page, click "Decrypt" and upload the steganographic image
-2. **Password Entry**: If the password wasn't embedded in the file, enter it in the password field
-3. **Extract**: Click "Decrypt" to extract and decrypt the hidden message
-4. **View Results**: The decoded message will be displayed on the screen
-
-### Test Samples
-
-You can use these test samples to try out the application:
-
-#### Sample 1: Basic Text Hiding
-
-1. Use any JPG or PNG image as your carrier file
-2. Use this sample text message:
-   ```
-   This is a secret message that will be hidden in the image using steganography.
-   The message is encrypted with AES-256 before being hidden in the image.
-   ```
-3. Use password: `test123password`
-4. Compare the original and resulting images - they should look visually identical
-
-#### Sample 2: Image Capacity Test
-
-1. Use a 1024x768 PNG image (approximately 2MB)
-2. This size of image can hide approximately 150KB of text (about 25,000 words)
-3. Use auto-generated password option for convenience
-4. The final image will be a PNG regardless of input format
-
-#### Sample 3: Command Line Usage
-
-For those who prefer command line:
+### Command Line Interface
 
 ```bash
-# Encrypt a message in an image
-python client.py encrypt --image path/to/image.jpg --message "Secret message" --password "your-password" --output stego-image.png
+# Encrypt a message
+python client.py encrypt image.png "secret message" "password"
 
-# Decrypt a message from an image
-python client.py decrypt --image path/to/stego-image.png --password "your-password"
+# Decrypt a message
+python client.py decrypt stego_image.png "password"
+
+# Generate QR code
+python client.py qr-encrypt "secret message" "password"
+
+# Decrypt QR code
+python client.py qr-decrypt qr_code.png "password"
 ```
 
-### Tips for Best Results
+### API Usage
 
-- PNG files work best as carrier files since they are lossless
-- Larger images can store more data
-- The auto-generated password option is recommended for maximum security
-- Always download and save the output image immediately - don't take screenshots of it
-- Remember that modifying the steganographic image (resizing, cropping, color adjustments) will likely destroy the hidden message
-
-## How It Works
-
-SteganoTool uses the following workflow for hiding and extracting messages:
-
-### Encryption Process
-
-1. **Select a carrier file**: Choose an image or audio file to hide your message in
-2. **Enter your secret message**: Type or paste the confidential message to be hidden
-3. **Compression process**: The message is compressed using zlib to minimize size
-4. **Provide a password**: Enter a strong password or use the auto-generate feature
-5. **Encryption process**: The compressed message is encrypted using AES-256 encryption
-   - For short messages (<32 bytes), a simpler XOR encryption is used
-   - For longer messages, AES-256 encryption in CBC mode with a random IV is used
-   - The password is used to derive a secure encryption key using PBKDF2
-6. **Steganography process**: The encrypted message is hidden in the carrier file
-   - For images: Uses the Least Significant Bit (LSB) technique to modify pixel data
-   - The data is spread across color channels (RGB) to minimize visual impact
-   - For audio: Embeds data in frequency domains or silent sections
-7. **Embedding password**: The password is optionally embedded in the file after a marker byte (0x01)
-8. **Download stego file**: The resulting file with hidden data is available for download
-
-### Decryption Process
-
-1. **Upload stego file**: Upload the file containing the hidden message
-2. **Extraction process**: The system extracts the hidden data from the carrier file
-   - For images: The LSB data is extracted and reconstructed
-   - For audio: The embedded data is extracted from frequency or time domains
-3. **Password retrieval**: The system checks for an embedded password after marker byte 0x01
-   - If found, it's used automatically
-   - If not found, the user must provide the password
-4. **Decryption process**: 
-   - The system first attempts XOR decryption for short messages
-   - If XOR decryption doesn't yield valid UTF-8, AES decryption is used
-   - The password is used to derive the same encryption key using PBKDF2
-5. **Decompression process**: The decrypted data is decompressed using zlib
-6. **View secret message**: The original message is displayed to the user
-
-### Technical Implementation
-
-- **Image Steganography**: Uses Python's Pillow library to manipulate image data
-- **Audio Steganography**: Uses audio processing libraries for WAV manipulation
-- **Encryption**: Implemented using PyCryptodome for AES operations
-- **Web Interface**: Built with Flask to provide a user-friendly experience
-- **Format Conversion**: Converts various image formats to PNG for consistent processing
-
-## Contributing
-
-We welcome contributions from the community. If you're interested in contributing, please follow our [contribution guidelines](CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Running Tests
-
-The project includes comprehensive tests to ensure functionality. Here's how to run them:
-
-### Prerequisites
-
-Make sure you have installed the development dependencies:
 ```bash
+# Health check
+curl http://localhost:8080/api/health
+
+# Get capabilities
+curl http://localhost:8080/api/capabilities
+
+# Encrypt (requires authentication)
+curl -X POST -H "Authorization: Bearer <token>" \
+  -F "file=@image.png" \
+  -F "message=secret message" \
+  -F "password=mypassword" \
+  http://localhost:8080/api/encrypt
+```
+
+## 🔧 API Endpoints
+
+| Endpoint | Method | Purpose | Auth Required |
+|----------|--------|---------|---------------|
+| `/api/health` | GET | Health check | No |
+| `/api/capabilities` | GET | System capabilities | No |
+| `/api/auth/sign-in` | POST | User authentication | No |
+| `/api/auth/sign-up` | POST | User registration | No |
+| `/api/encrypt` | POST | Hide message in media | Yes |
+| `/api/decrypt` | POST | Extract message from media | Yes |
+| `/api/generate-qr` | POST | Generate QR code | Yes |
+| `/api/encrypt-qr` | POST | Create encrypted QR code | Yes |
+| `/api/decrypt-qr` | POST | Decrypt QR code message | Yes |
+| `/api/download/:filename` | GET | Download processed file | Yes |
+
+For detailed API documentation, see [API Reference](docs/api_reference_detailed.md).
+
+## 🧪 Testing
+
+### Run Tests
+```bash
+# Install test dependencies
 pip install -r requirements-dev.txt
-pip install pytest pytest-cov
+
+# Run all tests
+python -m pytest tests/
+
+# Run with coverage
+python -m pytest --cov=. tests/
+
+# Run specific tests
+python -m pytest tests/test_api.py -v
+python -m pytest tests/test_utils.py -v
 ```
 
-### Running Basic Tests
-
-To run all tests:
+### Test Coverage
 ```bash
-pytest
+# Generate HTML coverage report
+python -m pytest --cov=. --cov-report=html tests/
+# Open htmlcov/index.html in browser
+
+# Generate terminal report
+python -m pytest --cov=. --cov-report=term tests/
 ```
 
-For more detailed output:
-```bash
-pytest -v
+## 📊 Performance
+
+### Compression Efficiency
+- **Text Messages**: 30-70% size reduction
+- **Repetitive Content**: Up to 95% compression
+- **Binary Data**: Variable based on entropy
+
+### Processing Speed
+- **Image Processing**: 1-5 seconds for typical images
+- **Audio Processing**: 2-10 seconds depending on size
+- **QR Code Generation**: 0.5-2 seconds
+
+### Capacity Limits
+- **Images**: 3 bits per pixel (RGB channels)
+- **Audio**: 1 bit per sample
+- **File Size**: Maximum 64MB upload
+
+## 🏗️ Architecture
+
+The system follows a clean, modular architecture:
+
+```
+├── api.py              # Flask API server (main entry point)
+├── utils.py            # Core utility functions and services
+├── client.py           # Command-line API client
+├── templates/          # Web interface templates
+├── static/             # Web assets (CSS, JS, images)
+├── tests/              # Comprehensive test suite
+├── docs/               # Complete documentation with UML diagrams
+├── uploads/            # Temporary file uploads
+└── output/             # Processed file outputs
 ```
 
-### Running Specific Tests
+For detailed architecture documentation, see [System Architecture](docs/system_architecture.md).
 
-To run only the API tests:
-```bash
-pytest tests/test_api.py -v
-```
+## 🤝 Contributing
 
-To run only the utility tests:
-```bash
-pytest tests/test_utils.py -v
-```
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-### Test Coverage Reports
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Install development dependencies: `pip install -r requirements-dev.txt`
+4. Make your changes
+5. Run tests: `python -m pytest tests/`
+6. Submit a pull request
 
-Generate a terminal coverage report:
-```bash
-pytest --cov=. --cov-report=term
-```
+## 📄 License
 
-Generate an HTML coverage report:
-```bash
-pytest --cov=. --cov-report=html
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This creates a `htmlcov` directory with HTML files showing coverage details. Open `htmlcov/index.html` in your browser to view.
+## 🆘 Support
 
-Generate an XML coverage report for CI tools:
-```bash
-pytest --cov=. --cov-report=xml
-```
+- **Documentation**: Start with [docs/README.md](docs/README.md)
+- **Issues**: Use GitHub Issues for bug reports and feature requests
+- **Security**: See [SECURITY.md](SECURITY.md) for security policy
+- **Troubleshooting**: Check [Troubleshooting Guide](docs/troubleshooting_guide.md)
 
-### Test Structure
+## 🔒 Security
 
-- **test_api.py**: Tests for the web API endpoints and request handling
-- **test_utils.py**: Tests for core utilities like encryption/decryption and steganography functions
+- AES-256-CBC encryption with PBKDF2 key derivation
+- Secure random password generation
+- Input validation and sanitization
+- Automatic file cleanup
+- Token-based authentication
 
-### Continuous Integration
+For detailed security information, see [Security Practices](docs/security_practices.md).
 
-The project uses GitHub Actions for continuous integration, automatically running tests on every push and pull request to ensure code quality.
+---
+
+**Built with ❤️ for secure communication**
