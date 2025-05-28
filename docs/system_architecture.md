@@ -92,7 +92,7 @@ classDiagram
         +run(host, port, debug)
         +create_directories()
     }
-    
+
     class APIRoutes {
         +health_check()
         +encrypt()
@@ -103,26 +103,26 @@ classDiagram
         +download_file()
         +get_capabilities()
     }
-    
+
     class AuthMiddleware {
         +require_api_auth()
         +validate_token()
         +check_session()
     }
-    
+
     class EncryptionService {
         +encrypt_message(message, password)
         +decrypt_message(data, password)
         +derive_key(password, salt)
         +generate_strong_password()
     }
-    
+
     class CompressionService {
         +compress_data(data)
         +decompress_data(data)
         +get_compression_info(message)
     }
-    
+
     class SteganographyService {
         +hide_data_in_image(input, output, data)
         +extract_data_from_image(path)
@@ -130,36 +130,36 @@ classDiagram
         +extract_data_from_audio(path)
         +convert_and_hide_in_image(input, output, data)
     }
-    
+
     class QRCodeService {
         +generate_qr_code(data, output)
         +hide_message_in_qr(message, password, output)
         +extract_message_from_qr(path, password)
     }
-    
+
     class MediaProcessor {
         +convert_audio_to_wav(path)
         +find_or_download_ffmpeg()
         +process_image_format(path)
     }
-    
+
     class FileManager {
         +secure_filename(filename)
         +save_file(file, path)
         +get_file_size(path)
         +cleanup_temp_files()
     }
-    
+
     class Client {
         +encrypt_message(api_url, file_path, message, password)
         +decrypt_message(api_url, file_path, password)
         +download_file(url, filename)
         +check_api_health(api_url)
     }
-    
+
     %% Relationships
-    FlaskApp ||--|| APIRoutes : contains
-    FlaskApp ||--|| AuthMiddleware : uses
+    FlaskApp --> APIRoutes : contains
+    FlaskApp --> AuthMiddleware : uses
     APIRoutes --> EncryptionService : uses
     APIRoutes --> CompressionService : uses
     APIRoutes --> SteganographyService : uses
@@ -169,6 +169,7 @@ classDiagram
     Client --> APIRoutes : calls
     EncryptionService --> CompressionService : uses
     QRCodeService --> EncryptionService : uses
+
 ```
 
 ## 3. Sequence Diagram - Encryption Process
