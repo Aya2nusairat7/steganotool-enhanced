@@ -24,10 +24,10 @@ graph TB
     end
     
     subgraph "Actors"
-        User[👤 End User]
-        Developer[👨‍💻 Developer]
-        Admin[👨‍💼 Administrator]
-        APIClient[🤖 API Client]
+        User[End User]
+        Developer[Developer]
+        Admin[Administrator]
+        APIClient[API Client]
     end
     
     %% User interactions
@@ -90,9 +90,9 @@ graph TB
     end
     
     subgraph "Actors"
-        NewUser[👤 New User]
-        ExistingUser[👤 Existing User]
-        System[🖥️ System]
+        NewUser[New User]
+        ExistingUser[Existing User]
+        System[System]
     end
     
     NewUser --> UC_AUTH2
@@ -114,17 +114,39 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Encryption Process Instance"
-        msg1[message1: Message<br/>content: "Secret text"<br/>size: 256 bytes<br/>encoding: "UTF-8"]
+        msg1["message1: Message
+        content: Secret text
+        size: 256 bytes
+        encoding: UTF-8"]
         
-        comp1[compression1: CompressionInfo<br/>original_size: 256<br/>compressed_size: 180<br/>ratio: 29.7%<br/>would_compress: true]
+        comp1["compression1: CompressionInfo
+        original_size: 256
+        compressed_size: 180
+        ratio: 29.7%
+        would_compress: true"]
         
-        enc1[encrypted1: EncryptedData<br/>salt: [16 bytes]<br/>iv: [16 bytes]<br/>ciphertext: [180 bytes]<br/>total_size: 212 bytes]
+        enc1["encrypted1: EncryptedData
+        salt: 16 bytes
+        iv: 16 bytes
+        ciphertext: 180 bytes
+        total_size: 212 bytes"]
         
-        file1[image1: MediaFile<br/>filename: "photo.jpg"<br/>format: "JPEG"<br/>size: 2048000<br/>capacity: 768000]
+        file1["image1: MediaFile
+        filename: photo.jpg
+        format: JPEG
+        size: 2048000
+        capacity: 768000"]
         
-        stego1[stego1: SteganographicFile<br/>output_path: "stego_photo.png"<br/>hidden_data_size: 212<br/>password_embedded: true]
+        stego1["stego1: SteganographicFile
+        output_path: stego_photo.png
+        hidden_data_size: 212
+        password_embedded: true"]
         
-        result1[result1: ProcessingResult<br/>status: "success"<br/>compression_ratio: 29.7%<br/>file_size: 2048500<br/>download_url: "/api/download/stego_photo.png"]
+        result1["result1: ProcessingResult
+        status: success
+        compression_ratio: 29.7%
+        file_size: 2048500
+        download_url: /api/download/stego_photo.png"]
     end
     
     msg1 --> comp1
@@ -139,13 +161,27 @@ graph TB
 ```mermaid
 graph TB
     subgraph "QR Code Generation Instance"
-        qr_msg[qrMessage: Message<br/>content: "Hidden data"<br/>size: 128 bytes]
+        qr_msg["qrMessage: Message
+        content: Hidden data
+        size: 128 bytes"]
         
-        qr_enc[qrEncrypted: EncryptedData<br/>salt: [16 bytes]<br/>iv: [16 bytes]<br/>ciphertext: [128 bytes]<br/>marker: 0x01<br/>password: "auto123"]
+        qr_enc["qrEncrypted: EncryptedData
+        salt: 16 bytes
+        iv: 16 bytes
+        ciphertext: 128 bytes
+        marker: 0x01
+        password: auto123"]
         
-        qr_code[qrCode: QRCode<br/>data: [encrypted payload]<br/>error_correction: "H"<br/>size: 512x512<br/>style: "fancy"]
+        qr_code["qrCode: QRCode
+        data: encrypted payload
+        error_correction: H
+        size: 512x512
+        style: fancy"]
         
-        qr_result[qrResult: ProcessingResult<br/>status: "success"<br/>output_filename: "qr_encrypted_abc123.png"<br/>auto_generated_password: "auto123"]
+        qr_result["qrResult: ProcessingResult
+        status: success
+        output_filename: qr_encrypted_abc123.png
+        auto_generated_password: auto123"]
     end
     
     qr_msg --> qr_enc
@@ -161,35 +197,35 @@ graph TB
 graph TB
     subgraph "Steganography System Packages"
         subgraph "Web Layer"
-            WebPkg[📦 web<br/>- templates/<br/>- static/<br/>- Flask routes]
+            WebPkg[Web Package<br/>templates/<br/>static/<br/>Flask routes]
         end
         
         subgraph "API Layer"
-            APIPkg[📦 api<br/>- REST endpoints<br/>- Authentication<br/>- Request handling]
+            APIPkg[API Package<br/>REST endpoints<br/>Authentication<br/>Request handling]
         end
         
         subgraph "Core Services"
-            CorePkg[📦 core<br/>- Encryption<br/>- Compression<br/>- Steganography]
+            CorePkg[Core Package<br/>Encryption<br/>Compression<br/>Steganography]
         end
         
         subgraph "Media Processing"
-            MediaPkg[📦 media<br/>- Image processing<br/>- Audio processing<br/>- Format conversion]
+            MediaPkg[Media Package<br/>Image processing<br/>Audio processing<br/>Format conversion]
         end
         
         subgraph "QR Code Services"
-            QRPkg[📦 qr<br/>- QR generation<br/>- QR steganography<br/>- Style processing]
+            QRPkg[QR Package<br/>QR generation<br/>QR steganography<br/>Style processing]
         end
         
         subgraph "Utilities"
-            UtilsPkg[📦 utils<br/>- File management<br/>- Security<br/>- Helpers]
+            UtilsPkg[Utils Package<br/>File management<br/>Security<br/>Helpers]
         end
         
         subgraph "Client"
-            ClientPkg[📦 client<br/>- CLI interface<br/>- API client<br/>- Command handlers]
+            ClientPkg[Client Package<br/>CLI interface<br/>API client<br/>Command handlers]
         end
         
         subgraph "Testing"
-            TestPkg[📦 tests<br/>- Unit tests<br/>- Integration tests<br/>- Test utilities]
+            TestPkg[Test Package<br/>Unit tests<br/>Integration tests<br/>Test utilities]
         end
     end
     
@@ -322,42 +358,42 @@ classDiagram
 ```mermaid
 graph TB
     subgraph "Client Tier"
-        WebUI[🌐 Web Interface<br/>HTML/CSS/JavaScript]
-        CLI[💻 CLI Client<br/>Python Command Line]
-        APIClient[🔌 API Client<br/>HTTP Requests]
+        WebUI[Web Interface<br/>HTML/CSS/JavaScript]
+        CLI[CLI Client<br/>Python Command Line]
+        APIClient[API Client<br/>HTTP Requests]
     end
     
     subgraph "Application Tier"
         subgraph "Web Server"
-            Flask[🌶️ Flask Application<br/>WSGI Server]
-            Routes[🛣️ API Routes<br/>REST Endpoints]
-            Auth[🔐 Authentication<br/>Token Validation]
+            Flask[Flask Application<br/>WSGI Server]
+            Routes[API Routes<br/>REST Endpoints]
+            Auth[Authentication<br/>Token Validation]
         end
         
         subgraph "Core Services"
-            EncryptSvc[🔒 Encryption Service<br/>AES-256-CBC]
-            CompressSvc[📦 Compression Service<br/>zlib Algorithm]
-            StegoSvc[🖼️ Steganography Service<br/>LSB Embedding]
-            QRSvc[📱 QR Code Service<br/>Generation & Processing]
+            EncryptSvc[Encryption Service<br/>AES-256-CBC]
+            CompressSvc[Compression Service<br/>zlib Algorithm]
+            StegoSvc[Steganography Service<br/>LSB Embedding]
+            QRSvc[QR Code Service<br/>Generation & Processing]
         end
         
         subgraph "Media Processing"
-            ImageProc[🖼️ Image Processor<br/>PIL/Pillow]
-            AudioProc[🎵 Audio Processor<br/>Wave Processing]
-            Converter[🔄 Format Converter<br/>FFmpeg Integration]
+            ImageProc[Image Processor<br/>PIL/Pillow]
+            AudioProc[Audio Processor<br/>Wave Processing]
+            Converter[Format Converter<br/>FFmpeg Integration]
         end
         
         subgraph "Utilities"
-            FileManager[📁 File Manager<br/>Upload/Download]
-            Security[🛡️ Security Utils<br/>Validation/Sanitization]
-            Logger[📝 Logger<br/>Event Tracking]
+            FileManager[File Manager<br/>Upload/Download]
+            Security[Security Utils<br/>Validation/Sanitization]
+            Logger[Logger<br/>Event Tracking]
         end
     end
     
     subgraph "Data Tier"
-        TempStorage[💾 Temporary Storage<br/>uploads/ directory]
-        OutputStorage[📤 Output Storage<br/>output/ directory]
-        StaticFiles[📄 Static Files<br/>CSS/JS/Images]
+        TempStorage[Temporary Storage<br/>uploads/ directory]
+        OutputStorage[Output Storage<br/>output/ directory]
+        StaticFiles[Static Files<br/>CSS/JS/Images]
     end
     
     %% Client connections
@@ -405,45 +441,45 @@ graph TB
 graph TB
     subgraph "Production Environment"
         subgraph "Load Balancer Tier"
-            LB[⚖️ Load Balancer<br/>Nginx/HAProxy<br/>Port 80/443]
+            LB[Load Balancer<br/>Nginx/HAProxy<br/>Port 80/443]
         end
         
         subgraph "Application Tier"
             subgraph "Web Server 1"
-                App1[🌶️ Flask App Instance 1<br/>Python 3.8+<br/>Port 8080]
-                Worker1[👷 Gunicorn Workers<br/>4 processes]
+                App1[Flask App Instance 1<br/>Python 3.8+<br/>Port 8080]
+                Worker1[Gunicorn Workers<br/>4 processes]
             end
             
             subgraph "Web Server 2"
-                App2[🌶️ Flask App Instance 2<br/>Python 3.8+<br/>Port 8081]
-                Worker2[👷 Gunicorn Workers<br/>4 processes]
+                App2[Flask App Instance 2<br/>Python 3.8+<br/>Port 8081]
+                Worker2[Gunicorn Workers<br/>4 processes]
             end
         end
         
         subgraph "File Storage Tier"
-            SharedFS[📁 Shared File System<br/>NFS/GlusterFS<br/>uploads/ & output/]
+            SharedFS[Shared File System<br/>NFS/GlusterFS<br/>uploads/ & output/]
         end
         
         subgraph "Monitoring Tier"
-            Monitor[📊 Monitoring<br/>Prometheus/Grafana]
-            Logs[📝 Log Aggregation<br/>ELK Stack]
+            Monitor[Monitoring<br/>Prometheus/Grafana]
+            Logs[Log Aggregation<br/>ELK Stack]
         end
     end
     
     subgraph "Development Environment"
-        DevServer[💻 Development Server<br/>Flask Dev Server<br/>localhost:8080]
-        LocalFS[📁 Local File System<br/>uploads/ & output/]
+        DevServer[Development Server<br/>Flask Dev Server<br/>localhost:8080]
+        LocalFS[Local File System<br/>uploads/ & output/]
     end
     
     subgraph "Client Environment"
-        Browser[🌐 Web Browser<br/>Chrome/Firefox/Safari]
-        CLITool[💻 CLI Tool<br/>Python Client]
-        Mobile[📱 Mobile Browser<br/>Responsive UI]
+        Browser[Web Browser<br/>Chrome/Firefox/Safari]
+        CLITool[CLI Tool<br/>Python Client]
+        Mobile[Mobile Browser<br/>Responsive UI]
     end
     
     subgraph "External Dependencies"
-        FFmpeg[🎬 FFmpeg<br/>Audio Conversion<br/>System Package]
-        Python[🐍 Python Runtime<br/>3.8+ with pip<br/>Virtual Environment]
+        FFmpeg[FFmpeg<br/>Audio Conversion<br/>System Package]
+        Python[Python Runtime<br/>3.8+ with pip<br/>Virtual Environment]
     end
     
     %% Production connections
@@ -756,61 +792,45 @@ sequenceDiagram
 stateDiagram-v2
     [*] --> Idle
     
-    Idle --> Uploading : file_upload_started
-    Uploading --> ValidationPending : file_uploaded
-    Uploading --> UploadError : upload_failed
+    Idle --> Uploading
+    Uploading --> ValidationPending
+    Uploading --> UploadError
     
-    ValidationPending --> Validating : start_validation
-    Validating --> ValidationError : validation_failed
-    Validating --> Validated : validation_passed
+    ValidationPending --> Validating
+    Validating --> ValidationError
+    Validating --> Validated
     
-    Validated --> Processing : start_processing
-    Processing --> Compressing : compression_needed
-    Processing --> Encrypting : skip_compression
+    Validated --> Processing
+    Processing --> Compressing
+    Processing --> Encrypting
     
-    Compressing --> CompressionError : compression_failed
-    Compressing --> Encrypting : compression_complete
+    Compressing --> CompressionError
+    Compressing --> Encrypting
     
-    Encrypting --> EncryptionError : encryption_failed
-    Encrypting --> Embedding : encryption_complete
+    Encrypting --> EncryptionError
+    Encrypting --> Embedding
     
-    Embedding --> EmbeddingError : embedding_failed
-    Embedding --> Finalizing : embedding_complete
+    Embedding --> EmbeddingError
+    Embedding --> Finalizing
     
-    Finalizing --> ProcessingComplete : finalization_complete
-    Finalizing --> ProcessingError : finalization_failed
+    Finalizing --> ProcessingComplete
+    Finalizing --> ProcessingError
     
-    ProcessingComplete --> AwaitingDownload : file_ready
-    AwaitingDownload --> Downloaded : file_downloaded
-    AwaitingDownload --> Expired : timeout_reached
+    ProcessingComplete --> AwaitingDownload
+    AwaitingDownload --> Downloaded
+    AwaitingDownload --> Expired
     
     %% Error states
-    UploadError --> Idle : reset
-    ValidationError --> Idle : reset
-    CompressionError --> Idle : reset
-    EncryptionError --> Idle : reset
-    EmbeddingError --> Idle : reset
-    ProcessingError --> Idle : reset
+    UploadError --> Idle
+    ValidationError --> Idle
+    CompressionError --> Idle
+    EncryptionError --> Idle
+    EmbeddingError --> Idle
+    ProcessingError --> Idle
     
     %% Final states
     Downloaded --> [*]
     Expired --> [*]
-    
-    %% State descriptions
-    Idle : Waiting for file upload
-    Uploading : File transfer in progress
-    ValidationPending : File uploaded, awaiting validation
-    Validating : Checking file format and size
-    Validated : File passed validation
-    Processing : Starting processing pipeline
-    Compressing : Applying compression algorithm
-    Encrypting : Applying encryption
-    Embedding : Hiding data in media
-    Finalizing : Creating output file
-    ProcessingComplete : Processing finished successfully
-    AwaitingDownload : File ready for download
-    Downloaded : File successfully downloaded
-    Expired : File expired and cleaned up
 ```
 
 ### User Session State Machine
@@ -819,46 +839,35 @@ stateDiagram-v2
 stateDiagram-v2
     [*] --> Anonymous
     
-    Anonymous --> SigningIn : sign_in_attempt
-    Anonymous --> SigningUp : sign_up_attempt
+    Anonymous --> SigningIn
+    Anonymous --> SigningUp
     
-    SigningIn --> SignInError : invalid_credentials
-    SigningIn --> Authenticated : credentials_valid
+    SigningIn --> SignInError
+    SigningIn --> Authenticated
     
-    SigningUp --> SignUpError : registration_failed
-    SigningUp --> Authenticated : registration_successful
+    SigningUp --> SignUpError
+    SigningUp --> Authenticated
     
-    Authenticated --> Active : session_established
-    Active --> Processing : start_operation
-    Active --> Idle : no_activity
+    Authenticated --> Active
+    Active --> Processing
+    Active --> Idle
     
-    Processing --> Active : operation_complete
-    Processing --> ProcessingError : operation_failed
+    Processing --> Active
+    Processing --> ProcessingError
     
-    Idle --> Active : user_activity
-    Idle --> SessionExpired : timeout_reached
+    Idle --> Active
+    Idle --> SessionExpired
     
-    Active --> SigningOut : logout_request
-    SigningOut --> Anonymous : logout_complete
+    Active --> SigningOut
+    SigningOut --> Anonymous
     
     %% Error recovery
-    SignInError --> Anonymous : retry_or_cancel
-    SignUpError --> Anonymous : retry_or_cancel
-    ProcessingError --> Active : error_handled
+    SignInError --> Anonymous
+    SignUpError --> Anonymous
+    ProcessingError --> Active
     
     %% Automatic transitions
-    SessionExpired --> Anonymous : session_cleanup
-    
-    %% State descriptions
-    Anonymous : No authentication
-    SigningIn : Authentication in progress
-    SigningUp : Registration in progress
-    Authenticated : Valid credentials received
-    Active : User actively using system
-    Processing : Operation in progress
-    Idle : Authenticated but inactive
-    SigningOut : Logout in progress
-    SessionExpired : Session timed out
+    SessionExpired --> Anonymous
 ```
 
 ### QR Code Processing State Machine
@@ -867,60 +876,46 @@ stateDiagram-v2
 stateDiagram-v2
     [*] --> QRIdle
     
-    QRIdle --> QRGenerating : generate_qr_request
-    QRIdle --> QRDecrypting : decrypt_qr_request
+    QRIdle --> QRGenerating
+    QRIdle --> QRDecrypting
     
-    QRGenerating --> QRCompressing : start_compression
-    QRGenerating --> QREncrypting : skip_compression
+    QRGenerating --> QRCompressing
+    QRGenerating --> QREncrypting
     
-    QRCompressing --> QRCompressionError : compression_failed
-    QRCompressing --> QREncrypting : compression_complete
+    QRCompressing --> QRCompressionError
+    QRCompressing --> QREncrypting
     
-    QREncrypting --> QREncryptionError : encryption_failed
-    QREncrypting --> QRCodeCreation : encryption_complete
+    QREncrypting --> QREncryptionError
+    QREncrypting --> QRCodeCreation
     
-    QRCodeCreation --> QRCreationError : qr_creation_failed
-    QRCodeCreation --> QRStyling : qr_created
+    QRCodeCreation --> QRCreationError
+    QRCodeCreation --> QRStyling
     
-    QRStyling --> QRStyleError : styling_failed
-    QRStyling --> QRComplete : styling_complete
+    QRStyling --> QRStyleError
+    QRStyling --> QRComplete
     
-    QRDecrypting --> QRExtracting : start_extraction
-    QRExtracting --> QRExtractionError : extraction_failed
-    QRExtracting --> QRDecryptingData : data_extracted
+    QRDecrypting --> QRExtracting
+    QRExtracting --> QRExtractionError
+    QRExtracting --> QRDecryptingData
     
-    QRDecryptingData --> QRDecryptionError : decryption_failed
-    QRDecryptingData --> QRDecompressing : decryption_complete
+    QRDecryptingData --> QRDecryptionError
+    QRDecryptingData --> QRDecompressing
     
-    QRDecompressing --> QRDecompressionError : decompression_failed
-    QRDecompressing --> QRDecryptComplete : decompression_complete
+    QRDecompressing --> QRDecompressionError
+    QRDecompressing --> QRDecryptComplete
     
     %% Success states
-    QRComplete --> QRIdle : reset
-    QRDecryptComplete --> QRIdle : reset
+    QRComplete --> QRIdle
+    QRDecryptComplete --> QRIdle
     
     %% Error recovery
-    QRCompressionError --> QRIdle : reset
-    QREncryptionError --> QRIdle : reset
-    QRCreationError --> QRIdle : reset
-    QRStyleError --> QRIdle : reset
-    QRExtractionError --> QRIdle : reset
-    QRDecryptionError --> QRIdle : reset
-    QRDecompressionError --> QRIdle : reset
-    
-    %% State descriptions
-    QRIdle : Ready for QR operations
-    QRGenerating : Starting QR generation
-    QRCompressing : Compressing message data
-    QREncrypting : Encrypting compressed data
-    QRCodeCreation : Creating QR code matrix
-    QRStyling : Applying visual styling
-    QRComplete : QR code generation complete
-    QRDecrypting : Starting QR decryption
-    QRExtracting : Extracting data from QR
-    QRDecryptingData : Decrypting extracted data
-    QRDecompressing : Decompressing decrypted data
-    QRDecryptComplete : QR decryption complete
+    QRCompressionError --> QRIdle
+    QREncryptionError --> QRIdle
+    QRCreationError --> QRIdle
+    QRStyleError --> QRIdle
+    QRExtractionError --> QRIdle
+    QRDecryptionError --> QRIdle
+    QRDecompressionError --> QRIdle
 ```
 
 ---
@@ -933,6 +928,8 @@ stateDiagram-v2
 - State diagrams use `stateDiagram-v2` for enhanced features
 - Class diagrams use proper inheritance (`<|--`) and composition (`*--`) notation
 - Sequence diagrams include proper participant definitions and message flows
+- Object diagrams avoid HTML tags and use multi-line text format
+- State descriptions removed to prevent parsing errors
 
 ### Customization Options
 - Colors and styling can be applied using Mermaid themes
