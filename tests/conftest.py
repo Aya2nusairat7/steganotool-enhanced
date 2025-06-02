@@ -1,31 +1,24 @@
-import pytest
-import sys
 import os
-from unittest.mock import MagicMock
+import sys
+import pytest
 
-# Mock PyQt5 modules for CI testing environment
-# This prevents issues with display/GUI when running in headless CI
-try:
-    import PyQt5
-except ImportError:
-    # If PyQt5 is not available, mock it
-    sys.modules['PyQt5'] = MagicMock()
-    sys.modules['PyQt5.QtCore'] = MagicMock()
-    sys.modules['PyQt5.QtGui'] = MagicMock()
-    sys.modules['PyQt5.QtWidgets'] = MagicMock()
+# Add the project root directory to the Python path
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-# Fixture for creating temporary directories for testing
-@pytest.fixture
-def temp_dir(tmp_path):
-    """Provides a temporary directory for testing file operations."""
-    return tmp_path
+# pytest configuration
+def pytest_configure(config):
+    """Configure pytest."""
+    # Add markers or other configuration here if needed
+    pass
 
-# Fixture for setting up test environment
-@pytest.fixture(scope="session", autouse=True)
-def setup_test_env():
-    """Sets up the test environment with required directories."""
-    # Create necessary directories if they don't exist
-    os.makedirs('uploads', exist_ok=True)
-    os.makedirs('output', exist_ok=True)
-    # Return any context needed for tests
-    return {} 
+@pytest.fixture(scope='function')
+def temp_output_dir(tmpdir):
+    """Create a temporary directory for test outputs."""
+    output_dir = tmpdir.mkdir("output")
+    return str(output_dir)
+
+@pytest.fixture(scope='function')
+def temp_upload_dir(tmpdir):
+    """Create a temporary directory for test uploads."""
+    upload_dir = tmpdir.mkdir("uploads")
+    return str(upload_dir) 

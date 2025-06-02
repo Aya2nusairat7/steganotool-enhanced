@@ -31,21 +31,17 @@ def compress_data(data):
     if isinstance(data, str):
         data = data.encode('utf-8')
     
-    original_size = len(data)
-    
     # Try compressing the data
     compressed = zlib.compress(data, level=9)  # Use maximum compression level
-    compressed_size = len(compressed)
     
     # Only return the compressed data if it's actually smaller
-    if compressed_size < original_size:
-        compression_ratio = ((original_size - compressed_size) / original_size) * 100
-        print(f"DEBUG: Compression reduced size from {original_size} to {compressed_size} bytes ({compression_ratio:.1f}% reduction)")
-        return compressed, True, original_size, compressed_size
+    if len(compressed) < len(data):
+        print(f"DEBUG: Compression reduced size from {len(data)} to {len(compressed)} bytes")
+        return compressed
     else:
-        print(f"DEBUG: Compression would increase size from {original_size} to {compressed_size} bytes, using original data")
+        print(f"DEBUG: Compression would increase size from {len(data)} to {len(compressed)} bytes, using original data")
         # Add a marker byte (0xFF) to indicate uncompressed data
-        return b'\xFF' + data, False, original_size, original_size
+        return b'\xFF' + data
 
 def decompress_data(compressed_data):
     """Decompress data that was compressed using zlib, or return original data if not compressed"""
@@ -64,42 +60,18 @@ def decompress_data(compressed_data):
         print(f"DEBUG: Decompression error: {str(e)}")
         raise ValueError(f"Decompression error: {str(e)}")
 
-def get_compression_info(message):
-    """Get compression information for a message without actually compressing it for encryption"""
-    if isinstance(message, str):
-        message = message.encode('utf-8')
-    
-    original_size = len(message)
-    
-    # Try compressing the data
-    compressed = zlib.compress(message, level=9)
-    compressed_size = len(compressed)
-    
-    # Determine if compression would be beneficial
-    if compressed_size < original_size:
-        compression_ratio = ((original_size - compressed_size) / original_size) * 100
-        would_compress = True
-    else:
-        compression_ratio = 0
-        would_compress = False
-    
-    return {
-        'original_size': original_size,
-        'compressed_size': compressed_size if would_compress else original_size,
-        'compression_ratio': compression_ratio,
-        'would_compress': would_compress
-    }
-
 def encrypt_message(message, password):
     """Encrypt a message using AES-256-CBC with a password"""
     # Compress the message first
     if isinstance(message, str):
         message = message.encode('utf-8')
     
-    compressed_message, is_compressed, original_size, compressed_size = compress_data(message)
+    compressed_message = compress_data(message)
     
     # Check if the data was actually compressed (marker byte 0xFF means not compressed)
-    if not is_compressed:
+    is_compressed = True
+    if compressed_message and len(compressed_message) > 0 and compressed_message[0] == 0xFF:
+        is_compressed = False
         # Remove the marker byte before encryption
         compressed_message = compressed_message[1:]
     

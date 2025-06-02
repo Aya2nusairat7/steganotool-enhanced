@@ -1,38 +1,23 @@
 import os
 import sys
 from pathlib import Path
-from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 import utils
 import hashlib
 import traceback
 from PIL import Image
-from functools import wraps
 
 # Create Flask app
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['OUTPUT_FOLDER'] = 'output'
 app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB max upload (increased from 16MB)
-app.secret_key = os.urandom(24)  # For session management
+# Removed secret key since we're removing authentication
 
 # Create necessary directories
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
-
-# Auth middleware for API routes
-def require_api_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth_token = request.headers.get('Authorization')
-        
-        # For demo purposes, we're not validating the token server-side
-        # In a real application, you would validate the token against a database
-        if not auth_token and 'auth_token' not in session:
-            return jsonify({'error': 'Authentication required'}), 401
-        
-        return f(*args, **kwargs)
-    return decorated
 
 # Utility function for encryption
 def encrypt_message(message, password):
@@ -121,7 +106,6 @@ def health_check():
     return jsonify({"status": "healthy"})
 
 @app.route('/api/encrypt', methods=['POST'])
-@require_api_auth
 def encrypt():
     """Encrypt a message and hide it in a media file"""
     try:
@@ -159,29 +143,34 @@ def encrypt():
         # Get original message size
         original_size = len(message.encode('utf-8'))
         
-        # Get compression information before encryption
-        compression_info = utils.get_compression_info(message)
-        
         # Encrypt the message
         message_bytes = message.encode('utf-8') if isinstance(message, str) else message
         encrypted_data = encrypt_message(message_bytes, password)
         
-        # Extract compression marker to determine if compression was actually used
+        # Calculate compression ratio correctly
+        # Format is now: [salt(16)][IV(16)][compression_marker(1)][ciphertext]
+        
+        # Extract compression marker to determine if compression was used
         if len(encrypted_data) > 32:
             compression_marker = encrypted_data[32:33]
             is_compressed = compression_marker != b'\xFF'
         else:
             is_compressed = False
         
-        # Use the compression info we calculated earlier
-        if is_compressed and compression_info['would_compress']:
-            compression_ratio = compression_info['compression_ratio']
-            compressed_size = compression_info['compressed_size']
-        else:
-            compression_ratio = 0
-            compressed_size = original_size
+        # Overhead is salt(16) + IV(16) + marker(1) = 33 bytes
+        overhead_size = 33
+        estimated_content_size = max(0, len(encrypted_data) - overhead_size)
         
-        print(f"DEBUG: Original size: {original_size}, Compressed size: {compressed_size}")
+        # For reporting to user
+        compressed_size = estimated_content_size
+        
+        # Calculate compression ratio
+        if is_compressed and original_size > 0:
+            compression_ratio = ((original_size - compressed_size) / original_size) * 100
+        else:
+            compression_ratio = 0  # No compression or invalid size
+        
+        print(f"DEBUG: Original size: {original_size}, Estimated content size: {compressed_size}")
         print(f"DEBUG: Compression applied: {is_compressed}, Ratio: {compression_ratio:.2f}%")
         
         # Prepare the data to be hidden
@@ -276,7 +265,6 @@ def encrypt():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/decrypt', methods=['POST'])
-@require_api_auth
 def decrypt():
     """Extract and decrypt a hidden message from a media file"""
     try:
@@ -469,7 +457,6 @@ def decrypt():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/download/<filename>', methods=['GET'])
-@require_api_auth
 def download_file(filename):
     """Download a file from the output folder"""
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename, as_attachment=True)
@@ -492,7 +479,6 @@ def get_capabilities():
     return jsonify(capabilities)
 
 @app.route('/api/generate-qr', methods=['POST'])
-@require_api_auth
 def generate_qr():
     """Generate a QR code from data"""
     try:
@@ -539,7 +525,6 @@ def generate_qr():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/encrypt-qr', methods=['POST'])
-@require_api_auth
 def encrypt_qr():
     """Encrypt a message and generate a QR code containing it"""
     try:
@@ -568,9 +553,6 @@ def encrypt_qr():
         # Get original message size
         original_size = len(message.encode('utf-8'))
         
-        # Get compression information before encryption
-        compression_info = utils.get_compression_info(message)
-        
         # Check for background image
         background_image = None
         if 'background' in request.files:
@@ -591,9 +573,9 @@ def encrypt_qr():
         # Get file size for response
         file_size = os.path.getsize(output_path)
         
-        # Use accurate compression information
-        compressed_size = compression_info['compressed_size']
-        compression_ratio = compression_info['compression_ratio']
+        # Calculate encrypted size (approximate)
+        encrypted_size = len(utils.encrypt_message(message.encode('utf-8'), password))
+        compression_ratio = (1 - encrypted_size / original_size) * 100 if original_size > 0 else 0
         
         return jsonify({
             'status': 'success',
@@ -601,7 +583,7 @@ def encrypt_qr():
             'file_size': file_size,
             'message_length': len(message),
             'original_size': original_size,
-            'compressed_size': compressed_size,
+            'encrypted_size': encrypted_size,
             'compression_ratio': compression_ratio,
             'auto_generated': auto_generate,
             'auto_generated_password': password if auto_generate else None,
@@ -618,7 +600,6 @@ def encrypt_qr():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/decrypt-qr', methods=['POST'])
-@require_api_auth
 def decrypt_qr():
     """Extract and decrypt a message from a QR code"""
     try:
@@ -684,77 +665,6 @@ def sign_in():
 def sign_up():
     """Render the sign-up page"""
     return render_template('sign-up.html')
-
-# API Authentication routes
-@app.route('/api/auth/sign-in', methods=['POST'])
-def api_sign_in():
-    """API endpoint for user sign-in"""
-    try:
-        # Get request JSON data
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
-        
-        # Validate inputs
-        if not email or not password:
-            return jsonify({'error': 'Email and password are required'}), 400
-        
-        # For demonstration purposes - in a real app, you would verify against a database
-        # This is a mock authentication
-        if email == 'demo@example.com' and password == 'Password123!':
-            # Generate a token
-            token = hashlib.sha256(f"{email}{os.urandom(8)}".encode()).hexdigest()
-            return jsonify({
-                'status': 'success',
-                'message': 'Authentication successful',
-                'token': token,
-                'user': {
-                    'email': email,
-                    'name': 'Demo User'
-                }
-            })
-        else:
-            return jsonify({'error': 'Invalid email or password'}), 401
-            
-    except Exception as e:
-        print(f"Sign-in error: {str(e)}")
-        return jsonify({'error': 'Authentication failed'}), 500
-
-@app.route('/api/auth/sign-up', methods=['POST'])
-def api_sign_up():
-    """API endpoint for user registration"""
-    try:
-        # Get request JSON data
-        data = request.get_json()
-        full_name = data.get('fullName')
-        email = data.get('email')
-        password = data.get('password')
-        
-        # Validate inputs
-        if not full_name or not email or not password:
-            return jsonify({'error': 'All fields are required'}), 400
-        
-        # For demonstration purposes - in a real app, you would store in a database
-        # This is a mock registration
-        if email == 'admin@example.com':
-            return jsonify({'error': 'Email already registered'}), 409
-            
-        # Generate a token
-        token = hashlib.sha256(f"{email}{os.urandom(8)}".encode()).hexdigest()
-        
-        return jsonify({
-            'status': 'success',
-            'message': 'Registration successful',
-            'token': token,
-            'user': {
-                'email': email,
-                'name': full_name
-            }
-        })
-            
-    except Exception as e:
-        print(f"Sign-up error: {str(e)}")
-        return jsonify({'error': 'Registration failed'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True) 
