@@ -8,12 +8,8 @@
   A modern steganography tool for hiding secret messages in images and audio files
 </p>
 
-<p align="center">
-  <img src="https://github.com/YazeedSalem0/steganotool-enhanced/actions/workflows/python-tests.yml/badge.svg" alt="Tests Status"/>
-  <a href="https://codecov.io/gh/YazeedSalem0/steganotool-enhanced">
-    <img src="https://codecov.io/gh/YazeedSalem0/steganotool-enhanced/branch/main/graph/badge.svg" alt="Coverage Status"/>
-  </a>
-</p>
+
+  
 
 <p align="center">
   <a href="#features">Features</a> •
@@ -48,14 +44,6 @@
 
 ### Setup
 
-1. Clone the repository:
-  ```bash
-   git clone https://github.com/YazeedSalem0/steganotool-enhanced.git
-   cd steganotool-enhanced
-  ```
-
-2. Install the required dependencies:
-  ```
 
 ## Usage
 
